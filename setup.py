@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 install_requires = [
     'numpy',
-    'polars>=0.18.15',
+    'polars>=0.19.11',
 ]
 
 setup(
