@@ -3,11 +3,16 @@ import numpy as np
 
 
 class MOMRollRateTable:
-    def __init__(self, unique_key_col: str, delinquency_col: str, df1: pl.DataFrame, df2: pl.DataFrame, max_delq: int = 6):
+    def __init__(self, unique_key_col: str, delinquency_col: str, path_i: str, path_i_plus_one: str, max_delq: int = 6):
         
+        self.df_i_path = path_i
+        self.df_i_plus_one_path = path_i_plus_one
         self.unique_key_col = unique_key_col
         self.delinquency_col = delinquency_col
-        self.data = df1.join(df2, how = 'left', on = self.unique_key_col, suffix = '_secondary')
+
+        self.df_i = pl.scan_csv(self.df_i_path)
+        self.df_i_plus_one = pl.scan_csv(self.df_i_plus_one_path)
+        self.data = self.df_i.join(self.df_i_plus_one, how = 'left', on = self.unique_key_col, suffix = '_secondary').collect()
         self.max_delq = max_delq
         self.roll_rate_matrix = np.zeros([self.max_delq + 1, self.max_delq + 1], dtype = np.int32)
 
