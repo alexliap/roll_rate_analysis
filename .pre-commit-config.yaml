@@ -4,10 +4,10 @@ ci:
   autofix_prs: true
 
 repos:
-- repo: https://github.com/psf/black
+- repo: https://github.com/psf/black-pre-commit-mirror
   rev: 23.11.0
   hooks:
-  - id: black
+  - id: black-jupyter
 
 - repo: https://github.com/PyCQA/isort
   rev: 5.12.0
@@ -23,11 +23,9 @@ repos:
   - id: check-merge-conflict
   - id: check-symlinks
   - id: check-yaml
-  - id: double-quote-string-fixer
   - id: debug-statements
   - id: end-of-file-fixer
   - id: mixed-line-ending
   - id: requirements-txt-fixer
   - id: trailing-whitespace
   - id: pretty-format-json
-
