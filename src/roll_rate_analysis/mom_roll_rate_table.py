@@ -54,7 +54,7 @@ class MOMRollRateTable:
         """
         tmp = (
             data.filter(pl.col(self.delinquency_col) == cycle)
-            .groupby([self.delinquency_col, self.delinquency_col + "_secondary"])
+            .group_by([self.delinquency_col, self.delinquency_col + "_secondary"])
             .count()
             .sort(self.delinquency_col + "_secondary")
         )
@@ -110,6 +110,13 @@ class MOMRollRateTable:
         return self.roll_rate_matrix
 
     def _generate_tags(self):
+        """
+        Generate column and row tags for the final month over month roll rate table.
+
+        Returns
+        -------
+        list: Roll Rate table column and row tags.
+        """
         tags = []
         for i in range(self.max_delq):
             tags.append(f"{i}_cycle_deliqnuent")

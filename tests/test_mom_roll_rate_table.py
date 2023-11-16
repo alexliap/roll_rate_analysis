@@ -1,60 +1,41 @@
 import numpy as np
+import pandas as pd
 import polars as pl
 
 from roll_rate_analysis.mom_roll_rate_table import MOMRollRateTable
 
 
 def test_init():
-    df1 = pl.scan_csv("test_datasets/test_sample_0.csv").collect()
-    df2 = pl.scan_csv("test_datasets/test_sample_1.csv").collect()
+    path_i = "tests/test_data/test_data_i.csv"
+    pathi_i_1 = "tests/test_data/test_data_i_1.csv"
 
     table = MOMRollRateTable(
-        unique_key_col="ACCOUNT_ID", delinquency_col="DEBT_AGING", df1=df1, df2=df2
+        unique_key_col="id",
+        delinquency_col="delq",
+        path_i=path_i,
+        path_i_plus_one=pathi_i_1,
+        max_delq=6,
     )
 
-    assert table.unique_key_col == "ACCOUNT_ID"
-    assert table.delinquency_col == "DEBT_AGING"
+    assert table.unique_key_col == "id"
+    assert table.delinquency_col == "delq"
     assert np.sum(table.roll_rate_matrix) == 0
 
 
-def test_build():
-    df1 = pl.scan_csv("test_datasets/test_sample_0.csv").collect()
-    df2 = pl.scan_csv("test_datasets/test_sample_1.csv").collect()
-    df = df1.join(df2, how="left", on="ACCOUNT_ID", suffix="_secondary")
-    schema_cols = [
-        "up_to_date",
-        "1_cycle_deliquent",
-        "2_cycle_deliquent",
-        "3_cycle_deliquent",
-        "4_cycle_deliquent",
-        "5_cycle_deliquent",
-        "6+_cycle_deliquent",
-    ]
-    roll_rates = np.zeros([len(schema_cols), len(schema_cols)], dtype=np.int32)
-
-    for j in range(df["DEBT_AGING"].min(), df["DEBT_AGING"].max() + 1):
-        tmp = (
-            df.filter(pl.col("DEBT_AGING") == j)
-            .groupby(["DEBT_AGING", "DEBT_AGING_secondary"])
-            .count()
-            .sort("DEBT_AGING_secondary")
-        )
-        idxs = tmp.filter((pl.col("DEBT_AGING_secondary") <= 5))[
-            "DEBT_AGING_secondary"
-        ].to_numpy()
-        values = tmp.filter((pl.col("DEBT_AGING_secondary") <= 5))["count"].to_numpy()
-        values_6_plus = tmp.filter((pl.col("DEBT_AGING_secondary") > 5))["count"].sum()
-
-        if j >= 6:
-            roll_rates[6, idxs] += values
-            roll_rates[6, 6] += values_6_plus
-        else:
-            roll_rates[j, idxs] += values
-            roll_rates[j, 6] += values_6_plus
+def test_build_max_delq_6():
+    path_i = "tests/test_data/test_data_i.csv"
+    pathi_i_1 = "tests/test_data/test_data_i_1.csv"
 
     table = MOMRollRateTable(
-        unique_key_col="ACCOUNT_ID", delinquency_col="DEBT_AGING", df1=df1, df2=df2
+        unique_key_col="id",
+        delinquency_col="delq",
+        path_i=path_i,
+        path_i_plus_one=pathi_i_1,
+        max_delq=6,
     )
-    roll_rate_matrix = table.build().to_numpy()
 
-    assert np.sum(roll_rates == roll_rate_matrix) == len(schema_cols) ** 2
+    table = table.build().values
+
+    test_result = pd.read_csv("tests/test_data/test_mom_rr_result_6.csv").values
+
+    assert np.sum(test_result == table) == 7**2
