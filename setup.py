@@ -17,7 +17,6 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Intended Audience :: Developers",
-        "Topic :: Credit Risk",
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
