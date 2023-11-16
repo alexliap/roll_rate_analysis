@@ -27,7 +27,6 @@ class SnapshotRollRateTable:
         self.roll_rate_matrix = np.zeros([self.max_delq + 1, self.max_delq + 1], dtype = np.int32)
 
     def compute(self):
-        # most propably create new object RollRateTable with attributes which indicate the important columns and stuff
         data = self.build().collect()
         for cycle in range(data['obs_max_delq'].min(), data['obs_max_delq'].max() + 1):
             self.roll_rate_matrix = self._n_cycle_performance(data, cycle = cycle)
