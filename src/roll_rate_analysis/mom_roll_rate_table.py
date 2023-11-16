@@ -45,5 +45,11 @@ class MOMRollRateTable:
             self.roll_rate_matrix[cycle, self.max_delq] += plus_values
 
     def get_roll_rates(self):
+        """
+        Get the roll rate matrix.
 
+        Returns
+        -------
+        np.ndarray: Roll Rate Matrix
+        """
         return self.roll_rate_matrix
