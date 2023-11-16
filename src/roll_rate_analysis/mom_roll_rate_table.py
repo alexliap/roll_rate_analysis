@@ -18,7 +18,7 @@ class MOMRollRateTable:
 
     def build(self):
         for cycle in range(self.data[self.delinquency_col].min(), self.data[self.delinquency_col].max() + 1):
-            self.roll_rate_matrix = self._n_cycle_performance(self.data, cycle = cycle)
+            self._n_cycle_performance(self.data, cycle = cycle)
         
         return pl.from_numpy(self.roll_rate_matrix, orient='row')
 
@@ -32,14 +32,17 @@ class MOMRollRateTable:
         values = tmp.filter((pl.col(self.delinquency_col + '_secondary') <= (self.max_delq - 1)))['count'].to_numpy()
         values_plus = tmp.filter((pl.col(self.delinquency_col + '_secondary') > (self.max_delq - 1)))['count'].sum()
 
-        if cycle >= self.max_delq:
-            self.roll_rate_matrix[self.max_delq, idxs] += values
-            self.roll_rate_matrix[self.max_delq, self.max_delq] += values_plus
-        else:
-            self.roll_rate_matrix[cycle, idxs] += values
-            self.roll_rate_matrix[cycle, self.max_delq] += values_plus
+        self._update_matrix(cycle=cycle, idxs=idxs, values=values, plus_values=values_plus)
         
         return self.roll_rate_matrix
+
+    def _update_matrix(self, cycle, idxs, values, plus_values):
+        if cycle >= self.max_delq:
+            self.roll_rate_matrix[self.max_delq, idxs] += values
+            self.roll_rate_matrix[self.max_delq, self.max_delq] += plus_values
+        else:
+            self.roll_rate_matrix[cycle, idxs] += values
+            self.roll_rate_matrix[cycle, self.max_delq] += plus_values
 
     def get_roll_rates(self):
 
