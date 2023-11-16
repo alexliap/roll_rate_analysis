@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import polars as pl
 
 
@@ -29,6 +30,7 @@ class MOMRollRateTable:
             self.df_i_plus_one, how="left", on=self.unique_key_col, suffix="_secondary"
         ).collect()
         self.max_delq = max_delq
+        self.tags = self._generate_tags()
         self.roll_rate_matrix = np.zeros(
             [self.max_delq + 1, self.max_delq + 1], dtype=np.int32
         )
@@ -43,9 +45,13 @@ class MOMRollRateTable:
         ):
             self._n_cycle_performance(self.data, cycle=cycle)
 
-        return pl.from_numpy(self.roll_rate_matrix, orient="row")
+        return pd.DataFrame(self.roll_rate_matrix, index=self.tags, columns=self.tags)
 
     def _n_cycle_performance(self, data: pl.DataFrame, cycle: int):
+        """
+        Given the cycle of delinquency the performance of those accounts is calculated
+        and the roll rate matrix is updated.
+        """
         tmp = (
             data.filter(pl.col(self.delinquency_col) == cycle)
             .groupby([self.delinquency_col, self.delinquency_col + "_secondary"])
@@ -69,7 +75,7 @@ class MOMRollRateTable:
 
     def _update_matrix(self, cycle, idxs, values, plus_values):
         """
-        Modifies the roll rate matrix given the indexes and their values.
+        Updates the roll rate matrix given the indexes and their values.
 
         Parameters
         -------
@@ -102,3 +108,12 @@ class MOMRollRateTable:
         np.ndarray: Roll Rate Matrix
         """
         return self.roll_rate_matrix
+
+    def _generate_tags(self):
+        tags = []
+        for i in range(self.max_delq):
+            tags.append(f"{i}_cycle_deliqnuent")
+
+        tags.append(f"{self.max_delq}+_cycle_deliqnuent")
+
+        return tags

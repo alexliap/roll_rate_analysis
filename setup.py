@@ -1,9 +1,6 @@
 from setuptools import find_packages, setup
 
-install_requires = [
-    "numpy",
-    "polars==0.19.11",
-]
+install_requires = ["numpy", "polars==0.19.11", "pandas"]
 
 setup(
     name="roll_rate_analysis",

@@ -209,6 +209,28 @@ class SnapshotRollRateTable:
         return idxs, values, values_plus
 
     def _update_matrix(self, cycle, idxs, values, plus_values, rank: int = 1):
+        """
+        Updates the roll rate matrix given the indexes and their values.
+
+        Parameters
+        -------
+        cycle: int,
+               Delinquency cycle (e.g. 0, 1, 2, 3, ...).
+
+        idxs: array-like,
+              Indexes of the values in the roll_rate_matrix that are going to be modified.
+
+        values: array-like,
+                Values that are going to be inserted in the roll_rate_matrix.
+
+        plus_values: int,
+                     Value that is going to be added to the last index of a row, which indicates the largest delinquency
+                     that we are taking into account.
+
+        rank: int,
+              Idnicator of the degree of granularity to compute at each update.
+        """
+
         if cycle in [0, 1, 2]:
             self.roll_rate_matrix[cycle, idxs] += values
             self.roll_rate_matrix[cycle, self.max_delq] += plus_values
