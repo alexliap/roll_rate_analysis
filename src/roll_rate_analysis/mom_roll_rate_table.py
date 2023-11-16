@@ -11,6 +11,13 @@ class MOMRollRateTable:
         path_i_plus_one: str,
         max_delq: int = 6,
     ):
+        """
+        Month Over Month Roll Rate Table of two consecutive months.
+
+        Paramaters
+        -------
+
+        """
         self.df_i_path = path_i
         self.df_i_plus_one_path = path_i_plus_one
         self.unique_key_col = unique_key_col
@@ -27,6 +34,9 @@ class MOMRollRateTable:
         )
 
     def build(self):
+        """
+        Computes the Month over month roll rate matrix for the two files that were given at initialization.
+        """
         for cycle in range(
             self.data[self.delinquency_col].min(),
             self.data[self.delinquency_col].max() + 1,
@@ -57,11 +67,24 @@ class MOMRollRateTable:
             cycle=cycle, idxs=idxs, values=values, plus_values=values_plus
         )
 
-        return self.roll_rate_matrix
-
     def _update_matrix(self, cycle, idxs, values, plus_values):
         """
         Modifies the roll rate matrix given the indexes and their values.
+
+        Parameters
+        -------
+        cycle: int,
+               Delinquency cycle (e.g. 0, 1, 2, 3, ...).
+
+        idxs: array-like,
+              Indexes of the values in the roll_rate_matrix that are going to be modified.
+
+        values: array-like,
+                Values that are going to be inserted in the roll_rate_matrix.
+
+        plus_values: int,
+                     Value that is going to be added to the last index of a row, which indicates the largest delinquency
+                     that we are taking into account.
         """
         if cycle >= self.max_delq:
             self.roll_rate_matrix[self.max_delq, idxs] += values
