@@ -23,4 +23,6 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     project_urls={"Source": "https://github.com/alexliap/roll_rate_analysis"},
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
 )
