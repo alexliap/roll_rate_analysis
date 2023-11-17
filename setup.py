@@ -17,6 +17,7 @@ setup(
     author_email="alexanrosliapates@gmail.com",
     packages=find_packages(),
     install_requires=install_requires,
+    extras_require=extras_require,
     python_requires=">=3.8",
     classifiers=[
         "Topic :: Software Development :: Libraries",
