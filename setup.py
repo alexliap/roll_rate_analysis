@@ -4,6 +4,11 @@ install_requires = ["numpy", "polars==0.19.11", "pandas"]
 
 extras_require = {"dev": ["pytest", "pre-commit", "jupyter"]}
 
+long_description = """
+Roll Rate Analysis python package. Both month over month and snapshot roll rate functionalities are supported.
+It utilizes polars library for optimizations and speed.
+"""
+
 setup(
     name="roll_rate_analysis",
     version="0.1.0",
@@ -23,6 +28,5 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     project_urls={"Source": "https://github.com/alexliap/roll_rate_analysis"},
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
+    long_description=long_description,
 )
