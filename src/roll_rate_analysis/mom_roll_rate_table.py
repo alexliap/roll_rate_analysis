@@ -13,11 +13,26 @@ class MOMRollRateTable:
         max_delq: int = 6,
     ):
         """
-        Month Over Month Roll Rate Table of two consecutive months.
+        Month Over Month Roll Rate Table of two consecutive months. Given a file that represents month i and another one that
+        represents month i+1 this class computes the month over moth roll rate.
 
         Paramaters
         -------
+        unique_key_col: str,
+                        Unique key column of the two files. The name of the column in the two files must be the same.
 
+        delinquency_col: str,
+                         Column which indicates the delinquency of an account. The name of the column in the two files must be the same.
+
+        path_i: str,
+                Path of the file that represents month i.
+
+        path_i_plus_one: str
+                         Path of the file that represents month i+1.
+
+        max_delq: int,
+                  Maximum value of delinquency we want in the table. Every other value for deliqnuency greater than max_delq
+                  is summarized and added into this one.
         """
         self.df_i_path = path_i
         self.df_i_plus_one_path = path_i_plus_one
@@ -37,7 +52,7 @@ class MOMRollRateTable:
 
     def build(self):
         """
-        Computes the Month over month roll rate matrix for the two files that were given at initialization.
+        Computes the month over month roll rate matrix for the two files that were given at initialization.
         """
         for cycle in range(
             self.data[self.delinquency_col].min(),
@@ -51,6 +66,14 @@ class MOMRollRateTable:
         """
         Given the cycle of delinquency the performance of those accounts is calculated
         and the roll rate matrix is updated.
+
+        Paramaters
+        -------
+        data: pl.DataFrame,
+              The combined data of the two files given at initialization.
+
+        cycle: int,
+               Delinquency cycle (e.g. 0, 1, 2, 3, ...).
         """
         tmp = (
             data.filter(pl.col(self.delinquency_col) == cycle)
@@ -86,11 +109,11 @@ class MOMRollRateTable:
               Indexes of the values in the roll_rate_matrix that are going to be modified.
 
         values: array-like,
-                Values that are going to be inserted in the roll_rate_matrix.
+                Performances for a certain delinquency cycle that are going to be inserted in the roll_rate_matrix.
 
         plus_values: int,
-                     Value that is going to be added to the last index of a row, which indicates the largest delinquency
-                     that we are taking into account.
+                     Performancesfor a certain delinquency cycle that are going to be added to the last index of a row,
+                     which indicates the largest delinquency that we are taking into account.
         """
         if cycle >= self.max_delq:
             self.roll_rate_matrix[self.max_delq, idxs] += values
