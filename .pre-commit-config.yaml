@@ -34,4 +34,6 @@ repos:
   rev: 6.0.0
   hooks:
   - id: flake8
+    # E501: line too long (black doesnt format docstrings)
+    # W503: line break before binary operator
     args: ["--ignore=E501,W503"]
