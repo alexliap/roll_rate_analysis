@@ -234,10 +234,10 @@ class SnapshotRollRateTable:
         if cycle in [0, 1, 2]:
             self.roll_rate_matrix[cycle, idxs] += values
             self.roll_rate_matrix[cycle, self.max_delq] += plus_values
-        if cycle == 3:
+        elif cycle == 3:
             self.roll_rate_matrix[cycle + rank - 1, idxs] += values
             self.roll_rate_matrix[cycle + rank - 1, self.max_delq] += plus_values
-        if cycle == 4:
+        elif cycle == 4:
             self.roll_rate_matrix[
                 cycle - 1 + self.granularity + rank - 1, idxs
             ] += values
