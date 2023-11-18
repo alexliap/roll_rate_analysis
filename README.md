@@ -21,7 +21,6 @@ Additional packages for development:
 
 * pytest
 * pre-commit
-* jupyter
 
 ### Development
 

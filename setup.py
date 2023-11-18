@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 install_requires = ["numpy", "polars==0.19.11", "pandas"]
 
-extras_require = {"dev": ["pytest", "pre-commit", "jupyter"]}
+extras_require = {"dev": ["pytest", "pre-commit"]}
 
 long_description = """
 Roll Rate Analysis python package. Both month over month and snapshot roll rate functionalities are supported.

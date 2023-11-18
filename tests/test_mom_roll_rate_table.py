@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import polars as pl
 
 from roll_rate_analysis.mom_roll_rate_table import MOMRollRateTable
 

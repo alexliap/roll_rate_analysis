@@ -29,3 +29,9 @@ repos:
   - id: requirements-txt-fixer
   - id: trailing-whitespace
   - id: pretty-format-json
+
+- repo: https://github.com/PyCQA/flake8
+  rev: 6.0.0
+  hooks:
+  - id: flake8
+    args: ["--ignore=E501,W503"]
