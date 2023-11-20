@@ -147,3 +147,32 @@ class MOMRollRateTable:
         tags.append(f"{self.max_delq}+_cycle_deliqnuent")
 
         return tags
+
+    def reduce(self, percentages=True):
+        roll_up = np.sum(
+            (
+                np.triu(self.roll_rate_matrix)
+                - np.diag(self.roll_rate_matrix.diagonal())
+            ),
+            axis=1,
+        )
+        roll_down = np.sum(
+            (
+                np.tril(self.roll_rate_matrix)
+                - np.diag(self.roll_rate_matrix.diagonal())
+            ),
+            axis=1,
+        )
+        stable = self.roll_rate_matrix.diagonal()
+
+        reduced_matrix = np.matrix([roll_down, stable, roll_up]).getT()
+
+        if percentages:
+            reduced_matrix = 100 * reduced_matrix / np.sum(reduced_matrix, axis=1)
+            reduced_matrix = np.round(reduced_matrix, 1)
+
+        reduced_table = pd.DataFrame(
+            reduced_matrix, columns=["roll_down", "stable", "roll_up"], index=self.tags
+        )
+
+        return reduced_table

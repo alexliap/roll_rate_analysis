@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from roll_rate_analysis.mom_roll_rate_table import MOMRollRateTable
+from roll_rate_analysis import MOMRollRateTable
 
 
 def test_init():

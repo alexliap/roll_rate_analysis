@@ -153,3 +153,5 @@ dmypy.json
 cython_debug/
 
 .DS_Store
+test_datasets/
+.vscode/
