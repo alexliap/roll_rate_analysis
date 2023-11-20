@@ -149,6 +149,18 @@ class MOMRollRateTable:
         return tags
 
     def reduce(self, percentages=True):
+        """
+        Produce a reduced matrix giving a higher level view of the roll rate.
+
+        Parameters
+        -------
+        percentages: bool,
+                     Either use percentages or total numbers.
+
+        Returns
+        -------
+        pd.DataFrame: Reduced roll rate table with or without percentages.
+        """
         roll_up = np.sum(
             (
                 np.triu(self.roll_rate_matrix)
