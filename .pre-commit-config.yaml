@@ -31,7 +31,7 @@ repos:
   - id: pretty-format-json
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 6.0.0
+  rev: 6.1.0
   hooks:
   - id: flake8
     # E501: line too long (black doesnt format docstrings)
