@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import polars as pl
+import polars.selectors as cs
 
 
 class MOMRollRateTable:
@@ -9,8 +10,9 @@ class MOMRollRateTable:
         unique_key_col: str,
         delinquency_col: str,
         path_i: str,
-        path_i_plus_one: str,
+        path_i_1: str,
         max_delq: int = 6,
+        binary_cols: list[str] = [],
     ):
         """
         Month Over Month Roll Rate Table of two consecutive months. Given a file that represents month i and another one that
@@ -27,42 +29,148 @@ class MOMRollRateTable:
         path_i: str,
                 Path of the file that represents month i.
 
-        path_i_plus_one: str
-                         Path of the file that represents month i+1.
+        path_i_1: str
+                  Path of the file that represents month i+1.
 
         max_delq: int,
                   Maximum value of delinquency we want in the table. Every other value for deliqnuency greater than max_delq
                   is summarized and added into this one.
         """
         self.df_i_path = path_i
-        self.df_i_plus_one_path = path_i_plus_one
+        self.df_i_1_path = path_i_1
         self.unique_key_col = unique_key_col
         self.delinquency_col = delinquency_col
+        self.binary_cols = binary_cols
+        self.priority_list = list(range(len(binary_cols), 0, -1))
 
-        self.df_i = pl.scan_csv(self.df_i_path)
-        self.df_i_plus_one = pl.scan_csv(self.df_i_plus_one_path)
+        self.df_i = pl.scan_csv(self.df_i_path).select(
+            [self.unique_key_col, self.delinquency_col] + self.binary_cols
+        )
+        self.df_i_1 = pl.scan_csv(self.df_i_1_path).select(
+            [self.unique_key_col, self.delinquency_col] + self.binary_cols
+        )
+
+        self.bin_col_dict = {}
+        if len(self.binary_cols) != 0:
+            self.bin_col_dict = self._priority_dict()
+            self.df_i = self._merge_binary_cols(self.df_i)
+            self.df_i_1 = self._merge_binary_cols(self.df_i_1)
+
         self.data = self.df_i.join(
-            self.df_i_plus_one, how="left", on=self.unique_key_col, suffix="_secondary"
+            self.df_i_1, how="left", on=self.unique_key_col, suffix="_secondary"
         ).collect()
+
         self.max_delq = max_delq
         self.tags = self._generate_tags()
         self.roll_rate_matrix = np.zeros(
-            [self.max_delq + 1, self.max_delq + 1], dtype=np.int32
+            [
+                self.max_delq + 1 + len(self.binary_cols),
+                self.max_delq + 1 + len(self.binary_cols),
+            ],
+            dtype=np.int32,
         )
 
     def build(self):
         """
         Computes the month over month roll rate matrix for the two files that were given at initialization.
         """
-        for cycle in range(
-            self.data[self.delinquency_col].min(),
-            self.data[self.delinquency_col].max() + 1,
-        ):
-            self._n_cycle_performance(self.data, cycle=cycle)
+        if len(self.binary_cols) == 0:
+            for cycle in range(
+                self.data[self.delinquency_col].min(),
+                self.data[self.delinquency_col].max() + 1,
+            ):
+                self._n_cycle_performance(self.data, case=1, cycle=cycle)
+        else:
+            for cycle in range(
+                self.data[self.delinquency_col].min(),
+                self.data[self.delinquency_col].max() + 1,
+            ):
+                self._n_cycle_performance(self.data, case=1, cycle=cycle)
+                self._n_cycle_performance(self.data, case=2, cycle=cycle)
 
-        return pd.DataFrame(self.roll_rate_matrix, index=self.tags, columns=self.tags)
+            for priority in self.priority_list:
+                self._bin_col_performance(self.data, priority=priority, case=3)
+                self._bin_col_performance(self.data, priority=priority, case=4)
 
-    def _n_cycle_performance(self, data: pl.DataFrame, cycle: int):
+        # return pd.DataFrame(self.roll_rate_matrix, index=self.tags, columns=self.tags)
+        return self.roll_rate_matrix
+
+    def _get_temp_data(
+        self, data: pl.DataFrame, case: int, cycle: int = None, priority: int = None
+    ):
+        if cycle is not None and priority is not None:
+            raise ValueError(
+                "Only one should be defined at a time, not both cycle and priority."
+            )
+        elif cycle is None:
+            quantity = priority
+        elif priority is None:
+            quantity = cycle
+
+        if case == 1:
+            if len(self.binary_cols) != 0:
+                data = data.filter(
+                    (pl.col("merged_bin_cols") == 0)
+                    & (pl.col("merged_bin_cols_secondary") == 0)
+                )
+
+            primary_col = self.delinquency_col
+            secondary_col = self.delinquency_col + "_secondary"
+        elif case == 2:
+            data = data.filter(
+                (pl.col("merged_bin_cols") == 0)
+                & (pl.col("merged_bin_cols_secondary") > 0)
+            )
+
+            primary_col = self.delinquency_col
+            secondary_col = "merged_bin_cols_secondary"
+        elif case == 3:
+            data = data.filter(
+                (pl.col("merged_bin_cols") > 0)
+                & (pl.col("merged_bin_cols_secondary") == 0)
+            )
+
+            primary_col = "merged_bin_cols"
+            secondary_col = self.delinquency_col + "_secondary"
+        elif case == 4:
+            data = data.filter(
+                (pl.col("merged_bin_cols") > 0)
+                & (pl.col("merged_bin_cols_secondary") > 0)
+            )
+
+            primary_col = "merged_bin_cols"
+            secondary_col = "merged_bin_cols_secondary"
+
+        tmp = (
+            data.filter(pl.col(primary_col) == quantity)
+            .group_by([primary_col, secondary_col])
+            .count()
+            .sort(secondary_col)
+        )
+
+        return tmp, secondary_col
+
+    def _get_values(self, tmp: pl.DataFrame, col_of_interest: str):
+        if col_of_interest == self.delinquency_col + "_secondary":
+            sub_tmp_1 = tmp.filter(
+                (pl.col(self.delinquency_col + "_secondary") <= (self.max_delq - 1))
+            )
+            sub_tmp_2 = tmp.filter(
+                (pl.col(self.delinquency_col + "_secondary") > (self.max_delq - 1))
+            )
+
+            idxs = sub_tmp_1[col_of_interest].to_numpy()
+            values = sub_tmp_1["count"].to_numpy()
+            values_plus = sub_tmp_2["count"].sum()
+
+        elif col_of_interest == "merged_bin_cols_secondary":
+            idxs = tmp["merged_bin_cols_secondary"].to_numpy() + self.max_delq
+            values = tmp["count"].to_numpy()
+            values_plus = 0
+
+        return idxs, values, values_plus
+
+    def _n_cycle_performance(self, data: pl.DataFrame, case: int, cycle: int):
         """
         Given the cycle of delinquency the performance of those accounts is calculated
         and the roll rate matrix is updated.
@@ -75,28 +183,28 @@ class MOMRollRateTable:
         cycle: int,
                Delinquency cycle (e.g. 0, 1, 2, 3, ...).
         """
-        tmp = (
-            data.filter(pl.col(self.delinquency_col) == cycle)
-            .group_by([self.delinquency_col, self.delinquency_col + "_secondary"])
-            .count()
-            .sort(self.delinquency_col + "_secondary")
-        )
+        tmp, col_of_interest = self._get_temp_data(data, case=case, cycle=cycle)
 
-        idxs = tmp.filter(
-            (pl.col(self.delinquency_col + "_secondary") <= (self.max_delq - 1))
-        )[self.delinquency_col + "_secondary"].to_numpy()
-        values = tmp.filter(
-            (pl.col(self.delinquency_col + "_secondary") <= (self.max_delq - 1))
-        )["count"].to_numpy()
-        values_plus = tmp.filter(
-            (pl.col(self.delinquency_col + "_secondary") > (self.max_delq - 1))
-        )["count"].sum()
+        idxs, values, values_plus = self._get_values(tmp, col_of_interest)
 
         self._update_matrix(
             cycle=cycle, idxs=idxs, values=values, plus_values=values_plus
         )
 
-    def _update_matrix(self, cycle, idxs, values, plus_values):
+    def _bin_col_performance(self, data: pl.DataFrame, priority: int, case: int):
+        tmp, col_of_interest = self._get_temp_data(data, case=case, priority=priority)
+
+        idxs, values, values_plus = self._get_values(tmp, col_of_interest)
+
+        self._update_matrix_bin(
+            priority=priority, idxs=idxs, values=values, plus_values=values_plus
+        )
+
+    def _update_matrix_bin(self, priority: int, idxs, values, plus_values: int = 0):
+        self.roll_rate_matrix[self.max_delq + priority, idxs] += values
+        self.roll_rate_matrix[self.max_delq + priority, self.max_delq] += plus_values
+
+    def _update_matrix(self, cycle: int, idxs, values, plus_values: int):
         """
         Updates the roll rate matrix given the indexes and their values.
 
@@ -112,7 +220,7 @@ class MOMRollRateTable:
                 Performances for a certain delinquency cycle that are going to be inserted in the roll_rate_matrix.
 
         plus_values: int,
-                     Performancesfor a certain delinquency cycle that are going to be added to the last index of a row,
+                     Performances for a certain delinquency cycle that are going to be added to the last index of a row,
                      which indicates the largest delinquency that we are taking into account.
         """
         if cycle >= self.max_delq:
@@ -188,3 +296,25 @@ class MOMRollRateTable:
         )
 
         return reduced_table
+
+    def _priority_dict(self):
+        bin_col_dict = {}
+        for i in range(len(self.binary_cols)):
+            bin_col_dict[self.binary_cols[i]] = self.priority_list[i]
+
+        return bin_col_dict
+
+    def _merge_binary_cols(self, data: pl.DataFrame):
+        for col in self.binary_cols:
+            data = data.with_columns(
+                pl.when(pl.col(col) == 1)
+                .then(pl.lit(self.bin_col_dict[col]))
+                .otherwise(pl.col(col))
+                .alias(col + "_new")
+            )
+
+        data = data.with_columns(
+            pl.max_horizontal(cs.ends_with("_new")).alias("merged_bin_cols")
+        )
+
+        return data
