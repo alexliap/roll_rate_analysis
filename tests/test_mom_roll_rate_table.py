@@ -36,11 +36,11 @@ def test_build_max_delq_6():
         max_delq=6,
     )
 
-    table = table.build()
+    table.build()
 
     test_result = pd.read_csv("tests/test_data/test_mom_rr_result_6.csv").values
 
-    assert np.sum(test_result == table) == 7**2
+    assert np.sum(test_result == table.get_roll_rates().values) == 7**2
 
 
 def test_build_max_delq_6_complete():
@@ -58,12 +58,14 @@ def test_build_max_delq_6_complete():
 
         rr_matrix = MOMRollRateTable(
             "id", "delq", path_i=file_i, path_i_1=file_i_1, max_delq=6
-        ).build()
+        )
+
+        rr_matrix.build()
 
         # colsums
-        colsums = np.sum(rr_matrix, axis=0).tolist()
+        colsums = np.sum(rr_matrix.get_roll_rates().values, axis=0).tolist()
         # rowsums
-        rowsums = np.sum(rr_matrix, axis=1).tolist()
+        rowsums = np.sum(rr_matrix.get_roll_rates().values, axis=1).tolist()
 
         right_rowsums = []
         right_colsums = []

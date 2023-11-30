@@ -61,7 +61,7 @@ class MOMRollRateTable:
         ).collect()
 
         self.max_delq = max_delq
-        self.tags = self._generate_tags()
+        self.tags = self._generate_tags() + self.binary_cols[::-1]
         self.roll_rate_matrix = np.zeros(
             [
                 self.max_delq + 1 + len(self.binary_cols),
@@ -89,15 +89,33 @@ class MOMRollRateTable:
                 self._n_cycle_performance(self.data, case=2, cycle=cycle)
 
             for priority in self.priority_list:
-                self._bin_col_performance(self.data, priority=priority, case=3)
-                self._bin_col_performance(self.data, priority=priority, case=4)
+                self._bin_col_performance(self.data, case=3, priority=priority)
+                self._bin_col_performance(self.data, case=4, priority=priority)
 
-        # return pd.DataFrame(self.roll_rate_matrix, index=self.tags, columns=self.tags)
-        return self.roll_rate_matrix
+        self.roll_rate_matrix = pd.DataFrame(
+            self.roll_rate_matrix, index=self.tags, columns=self.tags
+        )
 
     def _get_temp_data(
         self, data: pl.DataFrame, case: int, cycle: int = None, priority: int = None
     ):
+        """
+        Get a temporary grouped part of the data, for every step of the roll rate calculation procedure.
+
+        Paramaters
+        -------
+        data: pl.DataFrame,
+              The combined data of the two files given at initialization.
+
+        case: int,
+              Represents the case for which we want the relevant data.
+
+        cycle: int,
+               Needed only when case equals with 1/2. It represents the delinquency of month i that we want data for.
+
+        priority: int,
+                  Needed only when case equals with 3 or 4. It represents the binary indicator column by its given priority.
+        """
         if cycle is not None and priority is not None:
             raise ValueError(
                 "Only one should be defined at a time, not both cycle and priority."
@@ -151,6 +169,17 @@ class MOMRollRateTable:
         return tmp, secondary_col
 
     def _get_values(self, tmp: pl.DataFrame, col_of_interest: str):
+        """
+        Get the roll rate values from the temporary grouped part of the data according to the column of interest.
+
+        Paramaters
+        -------
+        tmp: pl.DataFrame,
+             The temporary grouped part of the data.
+
+        col_of_interest: str,
+                         Either the delinquency col of month i+1 or the column with the prioritized binary indicators of month i+1.
+        """
         if col_of_interest == self.delinquency_col + "_secondary":
             sub_tmp_1 = tmp.filter(
                 (pl.col(self.delinquency_col + "_secondary") <= (self.max_delq - 1))
@@ -172,7 +201,7 @@ class MOMRollRateTable:
 
     def _n_cycle_performance(self, data: pl.DataFrame, case: int, cycle: int):
         """
-        Given the cycle of delinquency the performance of those accounts is calculated
+        Given the cycle of delinquency, the performance of those accounts is calculated
         and the roll rate matrix is updated.
 
         Paramaters
@@ -180,9 +209,17 @@ class MOMRollRateTable:
         data: pl.DataFrame,
               The combined data of the two files given at initialization.
 
+        case: int,
+              Represents the case for which we want the relevant data.
+
         cycle: int,
                Delinquency cycle (e.g. 0, 1, 2, 3, ...).
         """
+        if case not in [1, 2]:
+            raise ValueError(
+                "Variable case in function _n_cycle_performance() can only be equal to 1 or 2."
+            )
+
         tmp, col_of_interest = self._get_temp_data(data, case=case, cycle=cycle)
 
         idxs, values, values_plus = self._get_values(tmp, col_of_interest)
@@ -191,7 +228,22 @@ class MOMRollRateTable:
             cycle=cycle, idxs=idxs, values=values, plus_values=values_plus
         )
 
-    def _bin_col_performance(self, data: pl.DataFrame, priority: int, case: int):
+    def _bin_col_performance(self, data: pl.DataFrame, case: int, priority: int):
+        """
+        Given the the binary indicator by its priority, the performance of those accounts is calculated
+        and the roll rate matrix is updated.
+
+        Paramaters
+        -------
+        data: pl.DataFrame,
+              The combined data of the two files given at initialization.
+
+        case: int,
+              Represents the case for which we want the relevant data.
+
+        priority: int,
+                  Needed only when case equals with 3 or 4. It represents the binary indicator column by its given priority.
+        """
         tmp, col_of_interest = self._get_temp_data(data, case=case, priority=priority)
 
         idxs, values, values_plus = self._get_values(tmp, col_of_interest)
@@ -201,6 +253,10 @@ class MOMRollRateTable:
         )
 
     def _update_matrix_bin(self, priority: int, idxs, values, plus_values: int = 0):
+        """
+        Updates the roll rate matrix for the binary rows/columns.
+        """
+
         self.roll_rate_matrix[self.max_delq + priority, idxs] += values
         self.roll_rate_matrix[self.max_delq + priority, self.max_delq] += plus_values
 
