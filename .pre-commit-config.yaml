@@ -28,7 +28,6 @@ repos:
   - id: mixed-line-ending
   - id: requirements-txt-fixer
   - id: trailing-whitespace
-  - id: pretty-format-json
 
 - repo: https://github.com/PyCQA/flake8
   rev: 6.1.0
