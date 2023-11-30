@@ -327,19 +327,19 @@ class MOMRollRateTable:
         """
         roll_up = np.sum(
             (
-                np.triu(self.roll_rate_matrix)
-                - np.diag(self.roll_rate_matrix.diagonal())
+                np.triu(self.roll_rate_matrix.values)
+                - np.diag(self.roll_rate_matrix.values.diagonal())
             ),
             axis=1,
         )
         roll_down = np.sum(
             (
-                np.tril(self.roll_rate_matrix)
-                - np.diag(self.roll_rate_matrix.diagonal())
+                np.tril(self.roll_rate_matrix.values)
+                - np.diag(self.roll_rate_matrix.values.diagonal())
             ),
             axis=1,
         )
-        stable = self.roll_rate_matrix.diagonal()
+        stable = self.roll_rate_matrix.values.diagonal()
 
         reduced_matrix = np.matrix([roll_down, stable, roll_up]).getT()
 
