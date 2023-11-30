@@ -37,3 +37,8 @@ repos:
     # E501: line too long (black doesnt format docstrings)
     # W503: line break before binary operator
     args: ["--ignore=E501,W503"]
+
+- repo: https://github.com/kynan/nbstripout
+  rev: 0.6.1
+  hooks:
+    - id: nbstripout
