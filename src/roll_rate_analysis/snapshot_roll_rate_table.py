@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import polars as pl
 import polars.selectors as cs
 
@@ -41,6 +42,8 @@ class SnapshotRollRateTable:
         self.obs_data = None
         self.perf_data = None
 
+        self.column_tags = self._generate_column_tags()
+        self.row_tags = self._generate_row_tags()
         # extra rows due to granularity
         self.extra_rows = 2 * (self.granularity - 1)
         self.roll_rate_matrix = np.zeros(
@@ -52,7 +55,9 @@ class SnapshotRollRateTable:
         for cycle in range(data["obs_max_delq"].min(), data["obs_max_delq"].max() + 1):
             self._n_cycle_performance(data, cycle=cycle)
 
-        return pl.from_numpy(self.roll_rate_matrix, orient="row")
+        self.roll_rate_matrix = pd.DataFrame(
+            self.roll_rate_matrix, index=self.row_tags, columns=self.column_tags
+        )
 
     def _n_cycle_performance(self, data: pl.DataFrame, cycle: int):
         tmp = data.filter(pl.col("obs_max_delq") == cycle)
@@ -79,7 +84,7 @@ class SnapshotRollRateTable:
 
         else:
             tmp = (
-                tmp.groupby(["obs_max_delq", "perf_max_delq"])
+                tmp.group_by(["obs_max_delq", "perf_max_delq"])
                 .count()
                 .sort("perf_max_delq")
             )
@@ -139,7 +144,6 @@ class SnapshotRollRateTable:
         )
 
         if self.detailed:
-            self.obs_data = self.null_to_zero(self.obs_data)
             self.obs_data = self.obs_data.with_columns(
                 [
                     pl.sum_horizontal(cs.starts_with(self.delinquency_col) == 3).alias(
@@ -169,10 +173,14 @@ class SnapshotRollRateTable:
 
     def keep(self, cols_to_keep: list[str]):
         for item in self.obs_files.keys():
-            self.obs_files[item] = self.obs_files[item].select(cols_to_keep)
+            self.obs_files[item] = self.obs_files[item].select(
+                [self.unique_key_col] + cols_to_keep
+            )
 
         for item in self.perf_files.keys():
-            self.perf_files[item] = self.perf_files[item].select(cols_to_keep)
+            self.perf_files[item] = self.perf_files[item].select(
+                [self.unique_key_col] + cols_to_keep
+            )
 
     def _detailed_delinquencies(self, data: pl.DataFrame, cycle: int, rank: int):
         if rank != self.granularity:
@@ -263,3 +271,37 @@ class SnapshotRollRateTable:
             )
 
         return data
+
+    def get_roll_rates(self):
+        return self.roll_rate_matrix
+
+    def _generate_row_tags(self):
+        tags = []
+        for i in range(self.max_delq):
+            if i in [3, 4] and self.granularity > 1:
+                for j in range(1, self.granularity):
+                    tags.append(f"{i}x{j}_cycle_deliqnuent")
+
+                tags.append(f"{i}x{self.granularity}+_cycle_deliqnuent")
+            else:
+                tags.append(f"{i}_cycle_deliqnuent")
+
+        tags.append(f"{self.max_delq}+_cycle_deliqnuent")
+
+        return tags
+
+    def _generate_column_tags(self):
+        """
+        Generate column and row tags for the final month over month roll rate table.
+
+        Returns
+        -------
+        list: Roll Rate table column and row tags.
+        """
+        tags = []
+        for i in range(self.max_delq):
+            tags.append(f"{i}_cycle_deliqnuent")
+
+        tags.append(f"{self.max_delq}+_cycle_deliqnuent")
+
+        return tags

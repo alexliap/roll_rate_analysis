@@ -292,7 +292,7 @@ class MOMRollRateTable:
 
         Returns
         -------
-        np.ndarray: Roll Rate Matrix
+        pl.DataFrame: Roll Rate Table
         """
         return self.roll_rate_matrix
 
