@@ -11,7 +11,7 @@ It utilizes polars library for optimizations and speed.
 
 setup(
     name="roll_rate_analysis",
-    version="0.1.3",
+    version="0.1.4",
     package_dir={"": "src"},
     author="Alexandros Liapatis",
     author_email="alexanrosliapates@gmail.com",
