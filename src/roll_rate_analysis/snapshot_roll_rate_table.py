@@ -65,7 +65,7 @@ class SnapshotRollRateTable:
         if self.detailed and cycle in [3, 4]:
             tmp = (
                 tmp.filter(pl.col(f"obs_times_{cycle}_cycle") >= 1)
-                .groupby([f"obs_times_{cycle}_cycle", "perf_max_delq"])
+                .group_by([f"obs_times_{cycle}_cycle", "perf_max_delq"])
                 .count()
                 .sort([f"obs_times_{cycle}_cycle", "perf_max_delq"])
             )
