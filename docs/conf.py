@@ -9,7 +9,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../src/roll_rate_analysis"))
+sys.path.insert(0, os.path.abspath("../src"))
 
 project = "Roll Rate Analysis"
 copyright = "2023, Alexandros Liapatis"
