@@ -5,6 +5,28 @@ import polars.selectors as cs
 
 
 class MOMRollRateTable:
+    """Month Over Month Roll Rate Table of two consecutive months. Given a file that represents month i and another one that
+    represents month i+1 this class computes the month over moth roll rate.
+
+    Paramaters
+    -------
+    unique_key_col: str,
+                    Unique key column of the two files. The name of the column in the two files must be the same.
+
+    delinquency_col: str,
+                     Column which indicates the delinquency of an account. The name of the column in the two files must be the same.
+
+    path_i: str,
+            Path of the file that represents month i.
+
+    path_i_1: str
+              Path of the file that represents month i+1.
+
+    max_delq: int,
+              Maximum value of delinquency we want in the table. Every other value for delinquency greater than max_delq
+              is summarized and added into this one.
+    """
+
     def __init__(
         self,
         unique_key_col: str,
@@ -14,28 +36,6 @@ class MOMRollRateTable:
         max_delq: int = 6,
         binary_cols: list[str] = [],
     ):
-        """
-        Month Over Month Roll Rate Table of two consecutive months. Given a file that represents month i and another one that
-        represents month i+1 this class computes the month over moth roll rate.
-
-        Paramaters
-        -------
-        unique_key_col: str,
-                        Unique key column of the two files. The name of the column in the two files must be the same.
-
-        delinquency_col: str,
-                         Column which indicates the delinquency of an account. The name of the column in the two files must be the same.
-
-        path_i: str,
-                Path of the file that represents month i.
-
-        path_i_1: str
-                  Path of the file that represents month i+1.
-
-        max_delq: int,
-                  Maximum value of delinquency we want in the table. Every other value for deliqnuency greater than max_delq
-                  is summarized and added into this one.
-        """
         self.df_i_path = path_i
         self.df_i_1_path = path_i_1
         self.unique_key_col = unique_key_col
