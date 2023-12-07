@@ -8,7 +8,7 @@ class MOMRollRateTable:
     """Month Over Month Roll Rate Table of two consecutive months. Given a file that represents month i and another one that
     represents month i+1 this class computes the month over moth roll rate.
 
-    Paramaters
+    Parameters
     -------
     unique_key_col: str,
                     Unique key column of the two files. The name of the column in the two files must be the same.
