@@ -5,6 +5,46 @@ import polars.selectors as cs
 
 
 class SnapshotRollRateTable:
+    """Snapshot Roll Rate Table: Given a list of files as an observation window and another list fo files as
+    a performance window, a roll rate table is calculated for tha accounts of the snapshot month.
+    By default, max delinquency is measured in both windows.
+
+    Parameters
+    -------
+    snapshot_file: str,
+                   Path to the file referring to the snapshot month.
+
+    unique_key_col: str,
+                    Unique key column of the files.
+                    The name of the unique_key_col should be the same in all files used.
+
+    delinquency_col: str,
+                     Column which indicates the delinquency of an account in months.
+                     The name of the delinquency_col should be the same in all files used.
+
+    obs_files: str,
+               List of file paths referring to observation window months.
+
+    perf_files: str
+                List of file paths referring to performance window months.
+
+    keep_cols: str, optional
+               List of columns to be kept. In general, one might not need every column of the file for the calculation,
+               so by keeping the ones needed the process is more efficient and faster.
+
+    max_delq: int,
+              Maximum value of delinquency we want in the table. Every other value for delinquency greater than max_delq
+              is summarized and added into this one.
+
+    detailed: bool,
+              Boolean variable indicating whether or not the table should be more detailed.
+              The detailed view concerns delinquencies equal to 3 and 4.
+
+    granularity: int,
+                 The level of granularity was want to see in our final more detailed table.
+                 The value must be greater or equal to 2 when detailed=True.
+    """
+
     def __init__(
         self,
         snapshot_file: str,
@@ -37,7 +77,7 @@ class SnapshotRollRateTable:
             self.perf_files[file] = pl.scan_csv(file)
 
         if keep_cols is not None:
-            self.keep(keep_cols)
+            self._keep(keep_cols)
 
         self.obs_data = None
         self.perf_data = None
@@ -51,6 +91,9 @@ class SnapshotRollRateTable:
         )
 
     def compute(self):
+        """
+        Computes the snapshot roll rate table for the snapshot, observation and performance files that were given at initialization.
+        """
         data = self.build().collect()
         for cycle in range(data["obs_max_delq"].min(), data["obs_max_delq"].max() + 1):
             self._n_cycle_performance(data, cycle=cycle)
@@ -104,6 +147,9 @@ class SnapshotRollRateTable:
             )
 
     def build(self):
+        """
+        Merges the relevant data into one dataset in order to proceed with the computation afterwards.
+        """
         self._build_obs_part()
         self._build_perf_part()
 
@@ -171,7 +217,7 @@ class SnapshotRollRateTable:
             )
         )
 
-    def keep(self, cols_to_keep: list[str]):
+    def _keep(self, cols_to_keep: list[str]):
         for item in self.obs_files.keys():
             self.obs_files[item] = self.obs_files[item].select(
                 [self.unique_key_col] + cols_to_keep
@@ -236,7 +282,7 @@ class SnapshotRollRateTable:
                      that we are taking into account.
 
         rank: int,
-              Idnicator of the degree of granularity to compute at each update.
+              Indicator of the degree of granularity to compute at each update.
         """
 
         if cycle in [0, 1, 2]:
@@ -261,18 +307,10 @@ class SnapshotRollRateTable:
                 self.max_delq + self.extra_rows, self.max_delq
             ] += plus_values
 
-    def null_to_zero(self, data: pl.DataFrame):
-        for column in data.columns[1:]:
-            data = data.with_columns(
-                pl.when(pl.col(column).is_null())
-                .then(pl.lit(0))
-                .otherwise(pl.col(column))
-                .alias(column)
-            )
-
-        return data
-
     def get_roll_rates(self):
+        """
+        Returns the roll rate table.
+        """
         return self.roll_rate_matrix
 
     def _generate_row_tags(self):
