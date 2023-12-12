@@ -2,7 +2,7 @@ roll\_rate\_analysis package
 ============================
 
 Module contents
-----------
+---------------
 
 roll\_rate\_analysis.mom\_roll\_rate\_table module
 --------------------------------------------------
@@ -19,11 +19,3 @@ roll\_rate\_analysis.snapshot\_roll\_rate\_table module
    :members:
    :undoc-members:
    :show-inheritance:
-
-.. Module contents
-.. ---------------
-
-.. .. automodule:: roll_rate_analysis
-..    :members:
-..    :undoc-members:
-..    :show-inheritance:
