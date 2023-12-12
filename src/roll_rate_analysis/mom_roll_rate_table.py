@@ -102,7 +102,7 @@ class MOMRollRateTable:
         """
         Get a temporary grouped part of the data, for every step of the roll rate calculation procedure.
 
-        Paramaters
+        Parameters
         -------
         data: pl.DataFrame,
               The combined data of the two files given at initialization.
@@ -172,7 +172,7 @@ class MOMRollRateTable:
         """
         Get the roll rate values from the temporary grouped part of the data according to the column of interest.
 
-        Paramaters
+        Parameters
         -------
         tmp: pl.DataFrame,
              The temporary grouped part of the data.
@@ -204,7 +204,7 @@ class MOMRollRateTable:
         Given the cycle of delinquency, the performance of those accounts is calculated
         and the roll rate matrix is updated.
 
-        Paramaters
+        Parameters
         -------
         data: pl.DataFrame,
               The combined data of the two files given at initialization.
@@ -233,7 +233,7 @@ class MOMRollRateTable:
         Given the the binary indicator by its priority, the performance of those accounts is calculated
         and the roll rate matrix is updated.
 
-        Paramaters
+        Parameters
         -------
         data: pl.DataFrame,
               The combined data of the two files given at initialization.
@@ -306,9 +306,9 @@ class MOMRollRateTable:
         """
         tags = []
         for i in range(self.max_delq):
-            tags.append(f"{i}_cycle_deliqnuent")
+            tags.append(f"{i}_cycle_delinquent")
 
-        tags.append(f"{self.max_delq}+_cycle_deliqnuent")
+        tags.append(f"{self.max_delq}+_cycle_delinquent")
 
         return tags
 
