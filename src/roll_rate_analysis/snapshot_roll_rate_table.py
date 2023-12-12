@@ -261,17 +261,6 @@ class SnapshotRollRateTable:
                 self.max_delq + self.extra_rows, self.max_delq
             ] += plus_values
 
-    def null_to_zero(self, data: pl.DataFrame):
-        for column in data.columns[1:]:
-            data = data.with_columns(
-                pl.when(pl.col(column).is_null())
-                .then(pl.lit(0))
-                .otherwise(pl.col(column))
-                .alias(column)
-            )
-
-        return data
-
     def get_roll_rates(self):
         return self.roll_rate_matrix
 
