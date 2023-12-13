@@ -37,7 +37,7 @@ git clone https://github.com/alexliap/roll_rate_analysis.git
 And after you create you environment (either venv or conda) and activate it then run this command
 
 ```terminal
-pip install -e '.[dev]'
+pip install -e .[dev]
 ```
 
 That way not only the required dependencies are installed but also the development ones.

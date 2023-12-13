@@ -318,13 +318,13 @@ class SnapshotRollRateTable:
         for i in range(self.max_delq):
             if i in [3, 4] and self.granularity > 1:
                 for j in range(1, self.granularity):
-                    tags.append(f"{i}x{j}_cycle_deliqnuent")
+                    tags.append(f"{i}x{j}_cycle_delinquent")
 
-                tags.append(f"{i}x{self.granularity}+_cycle_deliqnuent")
+                tags.append(f"{i}x{self.granularity}+_cycle_delinquent")
             else:
-                tags.append(f"{i}_cycle_deliqnuent")
+                tags.append(f"{i}_cycle_delinquent")
 
-        tags.append(f"{self.max_delq}+_cycle_deliqnuent")
+        tags.append(f"{self.max_delq}+_cycle_delinquent")
 
         return tags
 
@@ -338,8 +338,8 @@ class SnapshotRollRateTable:
         """
         tags = []
         for i in range(self.max_delq):
-            tags.append(f"{i}_cycle_deliqnuent")
+            tags.append(f"{i}_cycle_delinquent")
 
-        tags.append(f"{self.max_delq}+_cycle_deliqnuent")
+        tags.append(f"{self.max_delq}+_cycle_delinquent")
 
         return tags
