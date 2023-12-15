@@ -33,6 +33,7 @@ repos:
   rev: 6.1.0
   hooks:
   - id: flake8
-    # E501: line too long (black doesnt format docstrings)
+    # E501: line too long (black doesn't format doc strings)
     # W503: line break before binary operator
-    args: ["--ignore=E501,W503"]
+    # E203 whitespace before ':'
+    args: ["--ignore=E501,W503,E203"]

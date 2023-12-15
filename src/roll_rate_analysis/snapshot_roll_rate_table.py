@@ -10,19 +10,19 @@ class SnapshotRollRateTable:
     By default, max delinquency is measured in both windows.
 
     Parameters
-    -------
-    snapshot_file: str,
+    ----------
+    snapshot_file: str
                    Path to the file referring to the snapshot month.
 
-    unique_key_col: str,
+    unique_key_col: str
                     Unique key column of the files.
                     The name of the unique_key_col should be the same in all files used.
 
-    delinquency_col: str,
+    delinquency_col: str
                      Column which indicates the delinquency of an account in months.
                      The name of the delinquency_col should be the same in all files used.
 
-    obs_files: str,
+    obs_files: str
                List of file paths referring to observation window months.
 
     perf_files: str
@@ -32,15 +32,15 @@ class SnapshotRollRateTable:
                List of columns to be kept. In general, one might not need every column of the file for the calculation,
                so by keeping the ones needed the process is more efficient and faster.
 
-    max_delq: int,
+    max_delq: int
               Maximum value of delinquency we want in the table. Every other value for delinquency greater than max_delq
               is summarized and added into this one.
 
-    detailed: bool,
+    detailed: bool
               Boolean variable indicating whether or not the table should be more detailed.
               The detailed view concerns delinquencies equal to 3 and 4.
 
-    granularity: int,
+    granularity: int
                  The level of granularity was want to see in our final more detailed table.
                  The value must be greater or equal to 2 when detailed=True.
     """
@@ -267,21 +267,21 @@ class SnapshotRollRateTable:
         Updates the roll rate matrix given the indexes and their values.
 
         Parameters
-        -------
+        ----------
         cycle: int,
                Delinquency cycle (e.g. 0, 1, 2, 3, ...).
 
-        idxs: array-like,
+        idxs: array-like
               Indexes of the values in the roll_rate_matrix that are going to be modified.
 
-        values: array-like,
+        values: array-like
                 Values that are going to be inserted in the roll_rate_matrix.
 
-        plus_values: int,
+        plus_values: int
                      Value that is going to be added to the last index of a row, which indicates the largest delinquency
                      that we are taking into account.
 
-        rank: int,
+        rank: int
               Indicator of the degree of granularity to compute at each update.
         """
 
@@ -343,3 +343,84 @@ class SnapshotRollRateTable:
         tags.append(f"{self.max_delq}+_cycle_delinquent")
 
         return tags
+
+    def reduce(self, percentages=True):
+        """
+        Return an aggregated view of the roll rate.
+
+        Parameters
+        ----------
+        percentages: bool
+                     If True use percentages, else use total numbers.
+
+        Returns
+        -------
+        pd.DataFrame: Aggregated roll rate table with or without percentages.
+        """
+
+        roll_rate_matrix = self.roll_rate_matrix.values
+
+        roll_down = []
+        roll_up = []
+        stable = []
+
+        # 0, 1, 2 delinquencies
+        up_1 = np.triu(roll_rate_matrix[:3, :]) - np.hstack(
+            (np.diag(roll_rate_matrix[:3, :].diagonal()), np.zeros((3, 4), dtype=int))
+        )
+        lo_1 = np.tril(roll_rate_matrix[:3, :]) - np.hstack(
+            (np.diag(roll_rate_matrix[:3, :].diagonal()), np.zeros((3, 4), dtype=int))
+        )
+
+        up_1 = np.sum(up_1, axis=1)
+        lo_1 = np.sum(lo_1, axis=1)
+        st_1 = roll_rate_matrix[:3, :].diagonal()
+
+        # 5 and upwards delinquencies
+        tmp = np.flip(np.flip(roll_rate_matrix[-2:, :], 1), 0)
+        up_2 = np.flip(
+            np.tril(tmp)
+            - np.hstack((np.diag(tmp.diagonal()), np.zeros((2, 5), dtype=int))),
+            0,
+        )
+        lo_2 = np.flip(
+            np.triu(tmp)
+            - np.hstack((np.diag(tmp.diagonal()), np.zeros((2, 5), dtype=int))),
+            0,
+        )
+
+        up_2 = np.sum(up_2, axis=1)
+        lo_2 = np.sum(lo_2, axis=1)
+        st_2 = np.flip(tmp.diagonal(), 0)
+
+        # 3, 4 delinquencies
+        for i, j in zip(range(self.granularity), (3, 4)):
+            tmp = roll_rate_matrix[
+                (3 + (i * self.granularity)) : (-2 - self.granularity * (1 - i)), :
+            ]
+
+            up_tmp = np.sum(tmp[:, j + 1 :], 1)
+            lo_tmp = np.sum(tmp[:, :j], 1)
+            st_tmp = tmp[:, j]
+
+            roll_down += lo_tmp.tolist()
+            roll_up += up_tmp.tolist()
+            stable += st_tmp.tolist()
+
+        roll_up = up_1.tolist() + roll_up + up_2.tolist()
+        roll_down = lo_1.tolist() + roll_down + lo_2.tolist()
+        stable = st_1.tolist() + stable + st_2.tolist()
+
+        reduced_matrix = np.matrix([roll_down, stable, roll_up]).getT()
+
+        if percentages:
+            reduced_matrix = 100 * reduced_matrix / np.sum(reduced_matrix, axis=1)
+            reduced_matrix = np.round(reduced_matrix, 1)
+
+        reduced_matrix = pd.DataFrame(
+            reduced_matrix,
+            columns=["roll_down", "stable", "roll_up"],
+            index=self.row_tags,
+        )
+
+        return reduced_matrix
