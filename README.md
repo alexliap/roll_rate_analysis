@@ -2,7 +2,6 @@
 
 ![deploy on pypi](https://github.com/alexliap/roll_rate_analysis/actions/workflows/publish-package.yaml/badge.svg)
 ![PyPI Version](https://img.shields.io/pypi/v/roll-rate-analysis?label=pypi%20package)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/roll-rate-analysis)
 
 Roll rate analysis is a type of analysis made in the sector of credit risk and is used to define the target variable. More specifically, it is used in the creation of Risk Application, and Behavioral Scorecards. Usually, it is a multiple iteration process which makes the process difficult if someone is working on custom code. The purpose of this package is to make the process easier by parametrizing a lot of factors needed in each case and iteration.
 
