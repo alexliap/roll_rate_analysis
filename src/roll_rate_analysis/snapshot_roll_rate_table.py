@@ -52,7 +52,7 @@ class SnapshotRollRateTable:
         delinquency_col: str,
         obs_files: list[str],
         perf_files: list[str],
-        keep_cols: list[str] = None,
+        keep_cols: list[str] | None = None,
         max_delq: int = 6,
         detailed: bool = False,
         granularity: int = 1,

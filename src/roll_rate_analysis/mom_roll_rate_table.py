@@ -101,7 +101,11 @@ class MOMRollRateTable:
         )
 
     def _get_temp_data(
-        self, data: pl.DataFrame, case: int, cycle: int = None, priority: int = None
+        self,
+        data: pl.DataFrame,
+        case: int,
+        cycle: int | None = None,
+        priority: int | None = None,
     ):
         """
         Get a temporary grouped part of the data, for every step of the roll rate calculation procedure.
