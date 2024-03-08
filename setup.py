@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = "0.1.5"
+version = "0.1.6"
 
 install_requires = ["numpy", "polars>=0.20.5", "pandas"]
 
