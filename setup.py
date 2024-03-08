@@ -1,6 +1,8 @@
 from setuptools import find_packages, setup
 
-install_requires = ["numpy", "polars==0.19.19", "pandas"]
+version = "0.1.5"
+
+install_requires = ["numpy", "polars>=0.19.19", "pandas"]
 
 extras_require = {"dev": ["pytest", "pre-commit"]}
 
@@ -11,7 +13,7 @@ It utilizes polars library for optimizations and speed.
 
 setup(
     name="roll_rate_analysis",
-    version="0.1.5",
+    version=version,
     package_dir={"": "src"},
     author="Alexandros Liapatis",
     author_email="alexanrosliapates@gmail.com",

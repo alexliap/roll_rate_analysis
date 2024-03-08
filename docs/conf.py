@@ -9,12 +9,14 @@
 import os
 import sys
 
+import setup
+
 sys.path.insert(0, os.path.abspath("../src"))
 
 project = "Roll Rate Analysis"
 copyright = "2023, Alexandros Liapatis"
 author = "Alexandros Liapatis"
-release = "0.1.4"
+release = setup.version
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
