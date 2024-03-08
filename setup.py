@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 version = "0.1.5"
 
-install_requires = ["numpy", "polars>=0.19.19", "pandas"]
+install_requires = ["numpy", "polars>=0.20.5", "pandas"]
 
 extras_require = {"dev": ["pytest", "pre-commit"]}
 

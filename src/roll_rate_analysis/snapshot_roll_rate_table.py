@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -52,7 +54,7 @@ class SnapshotRollRateTable:
         delinquency_col: str,
         obs_files: list[str],
         perf_files: list[str],
-        keep_cols: list[str] | None = None,
+        keep_cols: Optional[list[str]] = None,
         max_delq: int = 6,
         detailed: bool = False,
         granularity: int = 1,
@@ -109,7 +111,7 @@ class SnapshotRollRateTable:
             tmp = (
                 tmp.filter(pl.col(f"obs_times_{cycle}_cycle") >= 1)
                 .group_by([f"obs_times_{cycle}_cycle", "perf_max_delq"])
-                .count()
+                .len()
                 .sort([f"obs_times_{cycle}_cycle", "perf_max_delq"])
             )
             for i in range(1, self.granularity + 1):
@@ -128,7 +130,7 @@ class SnapshotRollRateTable:
         else:
             tmp = (
                 tmp.group_by(["obs_max_delq", "perf_max_delq"])
-                .count()
+                .len()
                 .sort("perf_max_delq")
             )
 
@@ -136,10 +138,10 @@ class SnapshotRollRateTable:
                 "perf_max_delq"
             ].to_numpy()
             values = tmp.filter((pl.col("perf_max_delq") <= (self.max_delq - 1)))[
-                "count"
+                "len"
             ].to_numpy()
             values_plus = tmp.filter((pl.col("perf_max_delq") > (self.max_delq - 1)))[
-                "count"
+                "len"
             ].sum()
 
             self._update_matrix(
@@ -237,15 +239,15 @@ class SnapshotRollRateTable:
             values = data.filter(
                 (pl.col(f"obs_times_{cycle}_cycle") == rank)
                 & (pl.col("perf_max_delq") < self.max_delq)
-            )["count"].to_numpy()
+            )["len"].to_numpy()
             values_plus = data.filter(
                 (pl.col(f"obs_times_{cycle}_cycle") == rank)
                 & (pl.col("perf_max_delq") >= self.max_delq)
-            )["count"].sum()
+            )["len"].sum()
         else:
             data = (
                 data.filter(pl.col(f"obs_times_{cycle}_cycle") >= rank)
-                .select(["perf_max_delq", "count"])
+                .select(["perf_max_delq", "len"])
                 .group_by(["perf_max_delq"])
                 .sum()
             )
@@ -254,10 +256,10 @@ class SnapshotRollRateTable:
                 "perf_max_delq"
             ].to_numpy()
             values = data.filter((pl.col("perf_max_delq") < self.max_delq))[
-                "count"
+                "len"
             ].to_numpy()
             values_plus = data.filter((pl.col("perf_max_delq") >= self.max_delq))[
-                "count"
+                "len"
             ].sum()
 
         return idxs, values, values_plus

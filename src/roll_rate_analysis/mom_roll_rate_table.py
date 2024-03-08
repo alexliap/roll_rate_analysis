@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import pandas as pd
 import polars as pl
@@ -104,8 +106,8 @@ class MOMRollRateTable:
         self,
         data: pl.DataFrame,
         case: int,
-        cycle: int | None = None,
-        priority: int | None = None,
+        cycle: Optional[int] = None,
+        priority: Optional[int] = None,
     ):
         """
         Get a temporary grouped part of the data, for every step of the roll rate calculation procedure.
@@ -170,7 +172,7 @@ class MOMRollRateTable:
         tmp = (
             data.filter(pl.col(primary_col) == quantity)
             .group_by([primary_col, secondary_col])
-            .count()
+            .len()
             .sort(secondary_col)
         )
 
@@ -197,12 +199,12 @@ class MOMRollRateTable:
             )
 
             idxs = sub_tmp_1[col_of_interest].to_numpy()
-            values = sub_tmp_1["count"].to_numpy()
-            values_plus = sub_tmp_2["count"].sum()
+            values = sub_tmp_1["len"].to_numpy()
+            values_plus = sub_tmp_2["len"].sum()
 
         elif col_of_interest == "merged_bin_cols_secondary":
             idxs = tmp["merged_bin_cols_secondary"].to_numpy() + self.max_delq
-            values = tmp["count"].to_numpy()
+            values = tmp["len"].to_numpy()
             values_plus = 0
 
         return idxs, values, values_plus
