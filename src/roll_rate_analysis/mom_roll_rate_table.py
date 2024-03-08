@@ -25,6 +25,10 @@ class MOMRollRateTable:
     max_delq: int,
               Maximum value of delinquency we want in the table. Every other value for delinquency greater than max_delq
               is summarized and added into this one.
+
+    binary_cols: list[str],
+                 List of binary columns that you want to inlude in the roll rate table. They have priority over delinquency.
+                 Also, if the binary_cols are more than one, they must be added in the list in descinding priority order.
     """
 
     def __init__(
