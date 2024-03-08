@@ -17,7 +17,7 @@ setup(
     package_dir={"": "src/"},
     author="Alexandros Liapatis",
     author_email="alexanrosliapates@gmail.com",
-    packages=find_packages(exclude=["tests"]),
+    packages=find_packages(where="src/", exclude=["tests"]),
     install_requires=install_requires,
     extras_require=extras_require,
     platforms="any",
