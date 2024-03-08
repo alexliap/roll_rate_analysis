@@ -14,12 +14,13 @@ It utilizes polars library for optimizations and speed.
 setup(
     name="roll_rate_analysis",
     version=version,
-    package_dir={"": "src"},
+    package_dir={"": "src/"},
     author="Alexandros Liapatis",
     author_email="alexanrosliapates@gmail.com",
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     install_requires=install_requires,
     extras_require=extras_require,
+    platforms="any",
     python_requires=">=3.8",
     classifiers=[
         "Topic :: Software Development :: Libraries",

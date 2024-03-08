@@ -121,7 +121,7 @@ class MOMRollRateTable:
               Represents the case for which we want the relevant data.
 
         cycle: int,
-               Needed only when case equals with 1/2. It represents the delinquency of month i that we want data for.
+               Needed only when case equals with 1 or 2. It represents the delinquency of month i that we want data for.
 
         priority: int,
                   Needed only when case equals with 3 or 4. It represents the binary indicator column by its given priority.
@@ -254,6 +254,11 @@ class MOMRollRateTable:
         priority: int,
                   Needed only when case equals with 3 or 4. It represents the binary indicator column by its given priority.
         """
+        if case not in [3, 4]:
+            raise ValueError(
+                "Variable case in function _bin_col_performance() can only be equal to 3 or 4."
+            )
+
         tmp, col_of_interest = self._get_temp_data(data, case=case, priority=priority)
 
         idxs, values, values_plus = self._get_values(tmp, col_of_interest)
