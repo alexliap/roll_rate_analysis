@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = "0.1.6"
+version = "0.1.7"
 
 install_requires = ["numpy", "polars>=0.20.5", "pandas"]
 
@@ -14,7 +14,7 @@ It utilizes polars library for optimizations and speed.
 setup(
     name="roll_rate_analysis",
     version=version,
-    package_dir={"": "src/"},
+    package_dir={"roll_rate_analysis": "src/roll_rate_analysis"},
     author="Alexandros Liapatis",
     author_email="alexanrosliapates@gmail.com",
     packages=find_packages(where="src/", exclude=["tests"]),
