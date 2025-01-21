@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>roll_rate_analysis package &mdash; Roll Rate Analysis 0.1.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=59fadc99"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Roll Rate Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">roll_rate_analysis package</a><ul>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-roll_rate_analysis.mom_roll_rate_table">roll_rate_analysis.mom_roll_rate_table module</a><ul>
+<li><a class="reference internal" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable"><code class="docutils literal notranslate"><span class="pre">MOMRollRateTable</span></code></a><ul>
+<li><a class="reference internal" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.build"><code class="docutils literal notranslate"><span class="pre">MOMRollRateTable.build()</span></code></a></li>
+<li><a class="reference internal" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.get_roll_rates"><code class="docutils literal notranslate"><span class="pre">MOMRollRateTable.get_roll_rates()</span></code></a></li>
+<li><a class="reference internal" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.reduce"><code class="docutils literal notranslate"><span class="pre">MOMRollRateTable.reduce()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-roll_rate_analysis.snapshot_roll_rate_table">roll_rate_analysis.snapshot_roll_rate_table module</a><ul>
+<li><a class="reference internal" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable"><code class="docutils literal notranslate"><span class="pre">SnapshotRollRateTable</span></code></a><ul>
+<li><a class="reference internal" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.build"><code class="docutils literal notranslate"><span class="pre">SnapshotRollRateTable.build()</span></code></a></li>
+<li><a class="reference internal" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.compute"><code class="docutils literal notranslate"><span class="pre">SnapshotRollRateTable.compute()</span></code></a></li>
+<li><a class="reference internal" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.get_roll_rates"><code class="docutils literal notranslate"><span class="pre">SnapshotRollRateTable.get_roll_rates()</span></code></a></li>
+<li><a class="reference internal" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.reduce"><code class="docutils literal notranslate"><span class="pre">SnapshotRollRateTable.reduce()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Roll Rate Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">roll_rate_analysis package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/roll_rate_analysis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="roll-rate-analysis-package">
+<h1>roll_rate_analysis package<a class="headerlink" href="#roll-rate-analysis-package" title="Link to this heading"></a></h1>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+</section>
+<section id="module-roll_rate_analysis.mom_roll_rate_table">
+<span id="roll-rate-analysis-mom-roll-rate-table-module"></span><h2>roll_rate_analysis.mom_roll_rate_table module<a class="headerlink" href="#module-roll_rate_analysis.mom_roll_rate_table" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">roll_rate_analysis.mom_roll_rate_table.</span></span><span class="sig-name descname"><span class="pre">MOMRollRateTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unique_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delinquency_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_i_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_delq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/mom_roll_rate_table.html#MOMRollRateTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Month Over Month Roll Rate Table of two consecutive months. Given a file that represents month i and another one that
+represents month i+1 this class computes the month over moth roll rate.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>unique_key_col: str,</dt><dd><p>Unique key column of the two files. The name of the column in the two files must be the same.</p>
+</dd>
+<dt>delinquency_col: str,</dt><dd><p>Column which indicates the delinquency of an account. The name of the column in the two files must be the same.</p>
+</dd>
+<dt>path_i: str,</dt><dd><p>Path of the file that represents month i.</p>
+</dd>
+<dt>path_i_1: str</dt><dd><p>Path of the file that represents month i+1.</p>
+</dd>
+<dt>max_delq: int,</dt><dd><p>Maximum value of delinquency we want in the table. Every other value for delinquency greater than max_delq
+is summarized and added into this one.</p>
+</dd>
+<dt>binary_cols: list[str],</dt><dd><p>List of binary columns that you want to inlude in the roll rate table. They have priority over delinquency.
+Also, if the binary_cols are more than one, they must be added in the list in descinding priority order.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/mom_roll_rate_table.html#MOMRollRateTable.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.build" title="Link to this definition"></a></dt>
+<dd><p>Computes the month over month roll rate matrix for the two files that were given at initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.get_roll_rates">
+<span class="sig-name descname"><span class="pre">get_roll_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/mom_roll_rate_table.html#MOMRollRateTable.get_roll_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.get_roll_rates" title="Link to this definition"></a></dt>
+<dd><p>Get the roll rate matrix.</p>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h4>
+<p>pl.DataFrame: Roll Rate Table</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percentages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/mom_roll_rate_table.html#MOMRollRateTable.reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.mom_roll_rate_table.MOMRollRateTable.reduce" title="Link to this definition"></a></dt>
+<dd><p>Return an aggregated view of the roll rate.</p>
+<section id="id1">
+<h4>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>percentages: bool</dt><dd><p>If True use percentages, else use total numbers.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h4>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<p>pd.DataFrame: Aggregated roll rate table with or without percentages.</p>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-roll_rate_analysis.snapshot_roll_rate_table">
+<span id="roll-rate-analysis-snapshot-roll-rate-table-module"></span><h2>roll_rate_analysis.snapshot_roll_rate_table module<a class="headerlink" href="#module-roll_rate_analysis.snapshot_roll_rate_table" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">roll_rate_analysis.snapshot_roll_rate_table.</span></span><span class="sig-name descname"><span class="pre">SnapshotRollRateTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delinquency_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perf_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_delq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detailed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">granularity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot_roll_rate_table.html#SnapshotRollRateTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Snapshot Roll Rate Table: Given a list of files as an observation window and another list fo files as
+a performance window, a roll rate table is calculated for tha accounts of the snapshot month.
+By default, max delinquency is measured in both windows.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>snapshot_file: str</dt><dd><p>Path to the file referring to the snapshot month.</p>
+</dd>
+<dt>unique_key_col: str</dt><dd><p>Unique key column of the files.
+The name of the unique_key_col should be the same in all files used.</p>
+</dd>
+<dt>delinquency_col: str</dt><dd><p>Column which indicates the delinquency of an account in months.
+The name of the delinquency_col should be the same in all files used.</p>
+</dd>
+<dt>obs_files: str</dt><dd><p>List of file paths referring to observation window months.</p>
+</dd>
+<dt>perf_files: str</dt><dd><p>List of file paths referring to performance window months.</p>
+</dd>
+<dt>keep_cols: str, optional</dt><dd><p>List of columns to be kept. In general, one might not need every column of the file for the calculation,
+so by keeping the ones needed the process is more efficient and faster.</p>
+</dd>
+<dt>max_delq: int</dt><dd><p>Maximum value of delinquency we want in the table. Every other value for delinquency greater than max_delq
+is summarized and added into this one.</p>
+</dd>
+<dt>detailed: bool</dt><dd><p>Boolean variable indicating whether or not the table should be more detailed.
+The detailed view concerns delinquencies equal to 3 and 4.</p>
+</dd>
+<dt>granularity: int</dt><dd><p>The level of granularity was want to see in our final more detailed table.
+The value must be greater or equal to 2 when detailed=True.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot_roll_rate_table.html#SnapshotRollRateTable.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.build" title="Link to this definition"></a></dt>
+<dd><p>Merges the relevant data into one dataset in order to proceed with the computation afterwards.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot_roll_rate_table.html#SnapshotRollRateTable.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.compute" title="Link to this definition"></a></dt>
+<dd><p>Computes the snapshot roll rate table for the snapshot, observation and performance files that were given at initialization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.get_roll_rates">
+<span class="sig-name descname"><span class="pre">get_roll_rates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot_roll_rate_table.html#SnapshotRollRateTable.get_roll_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.get_roll_rates" title="Link to this definition"></a></dt>
+<dd><p>Returns the roll rate table.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percentages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot_roll_rate_table.html#SnapshotRollRateTable.reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot_roll_rate_table.SnapshotRollRateTable.reduce" title="Link to this definition"></a></dt>
+<dd><p>Return an aggregated view of the roll rate.</p>
+<section id="id4">
+<h4>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>percentages: bool</dt><dd><p>If True use percentages, else use total numbers.</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h4>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<p>pd.DataFrame: Aggregated roll rate table with or without percentages.</p>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alexandros Liapatis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
