@@ -1,4 +1,13 @@
-from roll_rate_analysis.mom_roll_rate_table import MOMRollRateTable
-from roll_rate_analysis.snapshot_roll_rate_table import SnapshotRollRateTable
+"""Roll rate analysis for credit risk scorecards."""
 
-__all__ = (MOMRollRateTable, SnapshotRollRateTable)
+from importlib.metadata import PackageNotFoundError, version
+
+from .mom import MOMRollRateTable
+from .snapshot import SnapshotRollRateTable
+
+try:
+    __version__ = version("roll-rate-analysis")
+except PackageNotFoundError:
+    __version__ = "0.0.0+unknown"
+
+__all__ = ("MOMRollRateTable", "SnapshotRollRateTable", "__version__")
