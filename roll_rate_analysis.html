@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>roll_rate_analysis package &mdash; Roll Rate Analysis 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="src" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Roll Rate Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">roll_rate_analysis package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-roll_rate_analysis">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#roll_rate_analysis.MOMRollRateTable"><code class="docutils literal notranslate"><span class="pre">MOMRollRateTable</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#roll_rate_analysis.SnapshotRollRateTable"><code class="docutils literal notranslate"><span class="pre">SnapshotRollRateTable</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-roll_rate_analysis.mom">roll_rate_analysis.mom module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#roll_rate_analysis.mom.MOMRollRateTable"><code class="docutils literal notranslate"><span class="pre">MOMRollRateTable</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-roll_rate_analysis.snapshot">roll_rate_analysis.snapshot module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#roll_rate_analysis.snapshot.SnapshotRollRateTable"><code class="docutils literal notranslate"><span class="pre">SnapshotRollRateTable</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Roll Rate Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">roll_rate_analysis package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/roll_rate_analysis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="roll-rate-analysis-package">
+<h1>roll_rate_analysis package<a class="headerlink" href="#roll-rate-analysis-package" title="Link to this heading"></a></h1>
+<section id="module-roll_rate_analysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-roll_rate_analysis" title="Link to this heading"></a></h2>
+<p>Roll rate analysis for credit risk scorecards.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="roll_rate_analysis.MOMRollRateTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">roll_rate_analysis.</span></span><span class="sig-name descname"><span class="pre">MOMRollRateTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">month_i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month_i_plus_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delinquency_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_delq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/mom.html#MOMRollRateTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.MOMRollRateTable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Month-over-month roll rate table for two consecutive monthly snapshots.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>month_i:</dt><dd><p>Data for month <code class="docutils literal notranslate"><span class="pre">i</span></code>. Accepts a polars <code class="docutils literal notranslate"><span class="pre">LazyFrame</span></code>/<code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> or a
+path/string pointing to a CSV file.</p>
+</dd>
+<dt>month_i_plus_1:</dt><dd><p>Data for month <code class="docutils literal notranslate"><span class="pre">i+1</span></code>. Same supported types as <code class="docutils literal notranslate"><span class="pre">month_i</span></code>.</p>
+</dd>
+<dt>unique_key_col:</dt><dd><p>Name of the account identifier column. Must exist in both inputs.</p>
+</dd>
+<dt>delinquency_col:</dt><dd><p>Name of the delinquency column (integer months past due). Must exist in
+both inputs.</p>
+</dd>
+<dt>max_delq:</dt><dd><p>Largest delinquency level kept as its own row/column. Anything above
+rolls into the <code class="docutils literal notranslate"><span class="pre">N+</span></code> bucket.</p>
+</dd>
+<dt>binary_cols:</dt><dd><p>Optional binary indicator columns to append to the matrix. Listed in
+descending priority — the first entry wins ties. Each indicator gets
+one extra row and column.</p>
+</dd>
+</dl>
+</section>
+<section id="use">
+<h3>Use<a class="headerlink" href="#use" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">MOMRollRateTable</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;jan.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;feb.csv&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">unique_key_col</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">delinquency_col</span><span class="o">=</span><span class="s2">&quot;delq&quot;</span><span class="p">,</span> <span class="n">max_delq</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, the full transition matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reduced</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">reduce</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, roll_down / stable / roll_up</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">compute</span></code> and <code class="docutils literal notranslate"><span class="pre">reduce</span></code> are idempotent; the matrix is cached after the
+first call. Both return polars <code class="docutils literal notranslate"><span class="pre">DataFrame``s</span> <span class="pre">whose</span> <span class="pre">first</span> <span class="pre">column</span>
+<span class="pre">(``from_state</span></code>) holds the row label.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.MOMRollRateTable.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/mom.html#MOMRollRateTable.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.MOMRollRateTable.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute the transition matrix and return it as a polars DataFrame.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="roll_rate_analysis.MOMRollRateTable.matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#roll_rate_analysis.MOMRollRateTable.matrix" title="Link to this definition"></a></dt>
+<dd><p>Return the cached transition matrix, computing it on first access.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.MOMRollRateTable.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percentages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/mom.html#MOMRollRateTable.reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.MOMRollRateTable.reduce" title="Link to this definition"></a></dt>
+<dd><p>Return roll_down / stable / roll_up per row, in percentages or counts.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="roll_rate_analysis.SnapshotRollRateTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">roll_rate_analysis.</span></span><span class="sig-name descname"><span class="pre">SnapshotRollRateTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delinquency_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_delq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detailed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">granularity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot.html#SnapshotRollRateTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.SnapshotRollRateTable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Roll rate table for a snapshot month with observation and performance windows.</p>
+<p>For every account in the snapshot, the observation window is reduced to its
+maximum delinquency across the supplied observation files, and similarly for
+the performance window. The resulting transition matrix has rows indexed by
+the observation max-delinquency and columns indexed by the performance
+max-delinquency.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>snapshot:</dt><dd><p>Data for the snapshot month (defines the account universe). Accepts a
+polars <code class="docutils literal notranslate"><span class="pre">LazyFrame</span></code>/<code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> or a path/string pointing to a CSV.</p>
+</dd>
+<dt>observation:</dt><dd><p>Sequence of frames or paths forming the observation window.</p>
+</dd>
+<dt>performance:</dt><dd><p>Sequence of frames or paths forming the performance window.</p>
+</dd>
+<dt>unique_key_col:</dt><dd><p>Name of the account identifier column. Must exist in every input.</p>
+</dd>
+<dt>delinquency_col:</dt><dd><p>Name of the delinquency column. Must exist in every observation and
+performance frame.</p>
+</dd>
+<dt>max_delq:</dt><dd><p>Largest delinquency level kept as its own row/column. Anything above
+rolls into the <code class="docutils literal notranslate"><span class="pre">N+</span></code> bucket.</p>
+</dd>
+<dt>detailed:</dt><dd><p>Split delinquency levels 3 and 4 into <code class="docutils literal notranslate"><span class="pre">granularity</span></code> sub-rows showing
+how many times the account hit that level during the observation window.</p>
+</dd>
+<dt>granularity:</dt><dd><p>Number of sub-rows per detailed level. Must be ≥ 2 when <code class="docutils literal notranslate"><span class="pre">detailed</span></code>.</p>
+</dd>
+<dt>keep_cols:</dt><dd><p>Optional column whitelist applied to each observation/performance frame
+before joining (memory optimisation). Must include <code class="docutils literal notranslate"><span class="pre">delinquency_col</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Use<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">SnapshotRollRateTable</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;snap.csv&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="s2">&quot;obs1.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;obs2.csv&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="s2">&quot;perf1.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;perf2.csv&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">unique_key_col</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">delinquency_col</span><span class="o">=</span><span class="s2">&quot;delq&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">granularity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, the full transition matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reduced</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">reduce</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, roll_down / stable / roll_up</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">compute</span></code> and <code class="docutils literal notranslate"><span class="pre">reduce</span></code> are idempotent; the matrix is cached after the
+first call.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.SnapshotRollRateTable.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot.html#SnapshotRollRateTable.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.SnapshotRollRateTable.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute the transition matrix and return it as a polars DataFrame.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="roll_rate_analysis.SnapshotRollRateTable.extra_rows">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extra_rows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#roll_rate_analysis.SnapshotRollRateTable.extra_rows" title="Link to this definition"></a></dt>
+<dd><p>Number of additional rows beyond <code class="docutils literal notranslate"><span class="pre">max_delq</span> <span class="pre">+</span> <span class="pre">1</span></code> due to detailed mode.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="roll_rate_analysis.SnapshotRollRateTable.matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#roll_rate_analysis.SnapshotRollRateTable.matrix" title="Link to this definition"></a></dt>
+<dd><p>Return the cached transition matrix, computing it on first access.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.SnapshotRollRateTable.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percentages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot.html#SnapshotRollRateTable.reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.SnapshotRollRateTable.reduce" title="Link to this definition"></a></dt>
+<dd><p>Return roll_down / stable / roll_up per row, in percentages or counts.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-roll_rate_analysis.mom">
+<span id="roll-rate-analysis-mom-module"></span><h2>roll_rate_analysis.mom module<a class="headerlink" href="#module-roll_rate_analysis.mom" title="Link to this heading"></a></h2>
+<p>Month-over-month roll rate table.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom.MOMRollRateTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">roll_rate_analysis.mom.</span></span><span class="sig-name descname"><span class="pre">MOMRollRateTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">month_i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month_i_plus_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delinquency_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_delq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/mom.html#MOMRollRateTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.mom.MOMRollRateTable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Month-over-month roll rate table for two consecutive monthly snapshots.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>month_i:</dt><dd><p>Data for month <code class="docutils literal notranslate"><span class="pre">i</span></code>. Accepts a polars <code class="docutils literal notranslate"><span class="pre">LazyFrame</span></code>/<code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> or a
+path/string pointing to a CSV file.</p>
+</dd>
+<dt>month_i_plus_1:</dt><dd><p>Data for month <code class="docutils literal notranslate"><span class="pre">i+1</span></code>. Same supported types as <code class="docutils literal notranslate"><span class="pre">month_i</span></code>.</p>
+</dd>
+<dt>unique_key_col:</dt><dd><p>Name of the account identifier column. Must exist in both inputs.</p>
+</dd>
+<dt>delinquency_col:</dt><dd><p>Name of the delinquency column (integer months past due). Must exist in
+both inputs.</p>
+</dd>
+<dt>max_delq:</dt><dd><p>Largest delinquency level kept as its own row/column. Anything above
+rolls into the <code class="docutils literal notranslate"><span class="pre">N+</span></code> bucket.</p>
+</dd>
+<dt>binary_cols:</dt><dd><p>Optional binary indicator columns to append to the matrix. Listed in
+descending priority — the first entry wins ties. Each indicator gets
+one extra row and column.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h3>Use<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">MOMRollRateTable</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;jan.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;feb.csv&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">unique_key_col</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">delinquency_col</span><span class="o">=</span><span class="s2">&quot;delq&quot;</span><span class="p">,</span> <span class="n">max_delq</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, the full transition matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reduced</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">reduce</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, roll_down / stable / roll_up</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">compute</span></code> and <code class="docutils literal notranslate"><span class="pre">reduce</span></code> are idempotent; the matrix is cached after the
+first call. Both return polars <code class="docutils literal notranslate"><span class="pre">DataFrame``s</span> <span class="pre">whose</span> <span class="pre">first</span> <span class="pre">column</span>
+<span class="pre">(``from_state</span></code>) holds the row label.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom.MOMRollRateTable.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/mom.html#MOMRollRateTable.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.mom.MOMRollRateTable.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute the transition matrix and return it as a polars DataFrame.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom.MOMRollRateTable.matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#roll_rate_analysis.mom.MOMRollRateTable.matrix" title="Link to this definition"></a></dt>
+<dd><p>Return the cached transition matrix, computing it on first access.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.mom.MOMRollRateTable.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percentages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/mom.html#MOMRollRateTable.reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.mom.MOMRollRateTable.reduce" title="Link to this definition"></a></dt>
+<dd><p>Return roll_down / stable / roll_up per row, in percentages or counts.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="module-roll_rate_analysis.snapshot">
+<span id="roll-rate-analysis-snapshot-module"></span><h2>roll_rate_analysis.snapshot module<a class="headerlink" href="#module-roll_rate_analysis.snapshot" title="Link to this heading"></a></h2>
+<p>Snapshot roll rate table over observation and performance windows.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot.SnapshotRollRateTable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">roll_rate_analysis.snapshot.</span></span><span class="sig-name descname"><span class="pre">SnapshotRollRateTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">performance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">LazyFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_key_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delinquency_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_delq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detailed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">granularity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot.html#SnapshotRollRateTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot.SnapshotRollRateTable" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Roll rate table for a snapshot month with observation and performance windows.</p>
+<p>For every account in the snapshot, the observation window is reduced to its
+maximum delinquency across the supplied observation files, and similarly for
+the performance window. The resulting transition matrix has rows indexed by
+the observation max-delinquency and columns indexed by the performance
+max-delinquency.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>snapshot:</dt><dd><p>Data for the snapshot month (defines the account universe). Accepts a
+polars <code class="docutils literal notranslate"><span class="pre">LazyFrame</span></code>/<code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> or a path/string pointing to a CSV.</p>
+</dd>
+<dt>observation:</dt><dd><p>Sequence of frames or paths forming the observation window.</p>
+</dd>
+<dt>performance:</dt><dd><p>Sequence of frames or paths forming the performance window.</p>
+</dd>
+<dt>unique_key_col:</dt><dd><p>Name of the account identifier column. Must exist in every input.</p>
+</dd>
+<dt>delinquency_col:</dt><dd><p>Name of the delinquency column. Must exist in every observation and
+performance frame.</p>
+</dd>
+<dt>max_delq:</dt><dd><p>Largest delinquency level kept as its own row/column. Anything above
+rolls into the <code class="docutils literal notranslate"><span class="pre">N+</span></code> bucket.</p>
+</dd>
+<dt>detailed:</dt><dd><p>Split delinquency levels 3 and 4 into <code class="docutils literal notranslate"><span class="pre">granularity</span></code> sub-rows showing
+how many times the account hit that level during the observation window.</p>
+</dd>
+<dt>granularity:</dt><dd><p>Number of sub-rows per detailed level. Must be ≥ 2 when <code class="docutils literal notranslate"><span class="pre">detailed</span></code>.</p>
+</dd>
+<dt>keep_cols:</dt><dd><p>Optional column whitelist applied to each observation/performance frame
+before joining (memory optimisation). Must include <code class="docutils literal notranslate"><span class="pre">delinquency_col</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Use<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">SnapshotRollRateTable</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;snap.csv&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="s2">&quot;obs1.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;obs2.csv&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="s2">&quot;perf1.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;perf2.csv&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">unique_key_col</span><span class="o">=</span><span class="s2">&quot;id&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">delinquency_col</span><span class="o">=</span><span class="s2">&quot;delq&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">granularity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, the full transition matrix</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reduced</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">reduce</span><span class="p">()</span>      <span class="c1"># polars.DataFrame, roll_down / stable / roll_up</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">compute</span></code> and <code class="docutils literal notranslate"><span class="pre">reduce</span></code> are idempotent; the matrix is cached after the
+first call.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot.SnapshotRollRateTable.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot.html#SnapshotRollRateTable.compute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot.SnapshotRollRateTable.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute the transition matrix and return it as a polars DataFrame.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot.SnapshotRollRateTable.extra_rows">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extra_rows</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#roll_rate_analysis.snapshot.SnapshotRollRateTable.extra_rows" title="Link to this definition"></a></dt>
+<dd><p>Number of additional rows beyond <code class="docutils literal notranslate"><span class="pre">max_delq</span> <span class="pre">+</span> <span class="pre">1</span></code> due to detailed mode.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot.SnapshotRollRateTable.matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">matrix</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#roll_rate_analysis.snapshot.SnapshotRollRateTable.matrix" title="Link to this definition"></a></dt>
+<dd><p>Return the cached transition matrix, computing it on first access.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="roll_rate_analysis.snapshot.SnapshotRollRateTable.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">percentages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/roll_rate_analysis/snapshot.html#SnapshotRollRateTable.reduce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#roll_rate_analysis.snapshot.SnapshotRollRateTable.reduce" title="Link to this definition"></a></dt>
+<dd><p>Return roll_down / stable / roll_up per row, in percentages or counts.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="src" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alexandros Liapatis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,394 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>roll_rate_analysis.snapshot &mdash; Roll Rate Analysis 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Roll Rate Analysis
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Roll Rate Analysis</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">roll_rate_analysis.snapshot</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for roll_rate_analysis.snapshot</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Snapshot roll rate table over observation and performance windows.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars.selectors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cs</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LazySource</span><span class="p">,</span>
+    <span class="n">cycle_row_tags</span><span class="p">,</span>
+    <span class="n">labeled_matrix</span><span class="p">,</span>
+    <span class="n">load_lazy</span><span class="p">,</span>
+    <span class="n">reduce_matrix</span><span class="p">,</span>
+    <span class="n">write_capped_counts</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_OBS_MAX</span> <span class="o">=</span> <span class="s2">&quot;obs_max_delq&quot;</span>
+<span class="n">_PERF_MAX</span> <span class="o">=</span> <span class="s2">&quot;perf_max_delq&quot;</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_RowSpec</span><span class="p">:</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">int</span>
+
+
+<div class="viewcode-block" id="SnapshotRollRateTable">
+<a class="viewcode-back" href="../../roll_rate_analysis.html#roll_rate_analysis.SnapshotRollRateTable">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SnapshotRollRateTable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Roll rate table for a snapshot month with observation and performance windows.</span>
+
+<span class="sd">    For every account in the snapshot, the observation window is reduced to its</span>
+<span class="sd">    maximum delinquency across the supplied observation files, and similarly for</span>
+<span class="sd">    the performance window. The resulting transition matrix has rows indexed by</span>
+<span class="sd">    the observation max-delinquency and columns indexed by the performance</span>
+<span class="sd">    max-delinquency.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    snapshot:</span>
+<span class="sd">        Data for the snapshot month (defines the account universe). Accepts a</span>
+<span class="sd">        polars ``LazyFrame``/``DataFrame`` or a path/string pointing to a CSV.</span>
+<span class="sd">    observation:</span>
+<span class="sd">        Sequence of frames or paths forming the observation window.</span>
+<span class="sd">    performance:</span>
+<span class="sd">        Sequence of frames or paths forming the performance window.</span>
+<span class="sd">    unique_key_col:</span>
+<span class="sd">        Name of the account identifier column. Must exist in every input.</span>
+<span class="sd">    delinquency_col:</span>
+<span class="sd">        Name of the delinquency column. Must exist in every observation and</span>
+<span class="sd">        performance frame.</span>
+<span class="sd">    max_delq:</span>
+<span class="sd">        Largest delinquency level kept as its own row/column. Anything above</span>
+<span class="sd">        rolls into the ``N+`` bucket.</span>
+<span class="sd">    detailed:</span>
+<span class="sd">        Split delinquency levels 3 and 4 into ``granularity`` sub-rows showing</span>
+<span class="sd">        how many times the account hit that level during the observation window.</span>
+<span class="sd">    granularity:</span>
+<span class="sd">        Number of sub-rows per detailed level. Must be ≥ 2 when ``detailed``.</span>
+<span class="sd">    keep_cols:</span>
+<span class="sd">        Optional column whitelist applied to each observation/performance frame</span>
+<span class="sd">        before joining (memory optimisation). Must include ``delinquency_col``.</span>
+
+<span class="sd">    Use</span>
+<span class="sd">    ---</span>
+<span class="sd">    &gt;&gt;&gt; table = SnapshotRollRateTable(</span>
+<span class="sd">    ...     &quot;snap.csv&quot;,</span>
+<span class="sd">    ...     [&quot;obs1.csv&quot;, &quot;obs2.csv&quot;],</span>
+<span class="sd">    ...     [&quot;perf1.csv&quot;, &quot;perf2.csv&quot;],</span>
+<span class="sd">    ...     unique_key_col=&quot;id&quot;,</span>
+<span class="sd">    ...     delinquency_col=&quot;delq&quot;,</span>
+<span class="sd">    ...     detailed=True,</span>
+<span class="sd">    ...     granularity=2,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; matrix = table.compute()      # polars.DataFrame, the full transition matrix</span>
+<span class="sd">    &gt;&gt;&gt; reduced = table.reduce()      # polars.DataFrame, roll_down / stable / roll_up</span>
+
+<span class="sd">    ``compute`` and ``reduce`` are idempotent; the matrix is cached after the</span>
+<span class="sd">    first call.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">snapshot</span><span class="p">:</span> <span class="n">LazySource</span><span class="p">,</span>
+        <span class="n">observation</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">LazySource</span><span class="p">],</span>
+        <span class="n">performance</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">LazySource</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">unique_key_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">delinquency_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">max_delq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="n">detailed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">granularity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">keep_cols</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">max_delq</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_delq must be &gt;= 1.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">granularity</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;granularity must be &gt;= 1.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">detailed</span> <span class="ow">and</span> <span class="n">granularity</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;granularity must be &gt;= 2 when detailed=True.&quot;</span><span class="p">)</span>
+
+        <span class="n">observation</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+        <span class="n">performance</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">performance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">observation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;at least one observation frame is required.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">performance</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;at least one performance frame is required.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">keep_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">keep_cols</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">keep_cols</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">delinquency_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keep_cols</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;keep_cols must include the delinquency_col so that it survives projection.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_snapshot_source</span> <span class="o">=</span> <span class="n">snapshot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observation_sources</span> <span class="o">=</span> <span class="n">observation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_performance_sources</span> <span class="o">=</span> <span class="n">performance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unique_key_col</span> <span class="o">=</span> <span class="n">unique_key_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delinquency_col</span> <span class="o">=</span> <span class="n">delinquency_col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span> <span class="o">=</span> <span class="n">max_delq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span> <span class="o">=</span> <span class="n">detailed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">granularity</span> <span class="o">=</span> <span class="n">granularity</span> <span class="k">if</span> <span class="n">detailed</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_cols</span> <span class="o">=</span> <span class="n">keep_cols</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_specs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_row_specs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_specs</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_tags</span> <span class="o">=</span> <span class="n">cycle_row_tags</span><span class="p">(</span><span class="n">max_delq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extra_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of additional rows beyond ``max_delq + 1`` due to detailed mode.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">granularity</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the cached transition matrix, computing it on first access.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span>
+
+<div class="viewcode-block" id="SnapshotRollRateTable.compute">
+<a class="viewcode-back" href="../../roll_rate_analysis.html#roll_rate_analysis.SnapshotRollRateTable.compute">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the transition matrix and return it as a polars DataFrame.&quot;&quot;&quot;</span>
+        <span class="n">n_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_rows</span>
+        <span class="n">n_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_joined</span><span class="p">()</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">height</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cycles</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">_OBS_MAX</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">_OBS_MAX</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">cycles</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_accumulate_cycle</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cycle</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="o">=</span> <span class="n">labeled_matrix</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_tags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_tags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span></div>
+
+
+<div class="viewcode-block" id="SnapshotRollRateTable.reduce">
+<a class="viewcode-back" href="../../roll_rate_analysis.html#roll_rate_analysis.SnapshotRollRateTable.reduce">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reduce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percentages</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return roll_down / stable / roll_up per row, in percentages or counts.&quot;&quot;&quot;</span>
+        <span class="n">diag_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">spec</span><span class="o">.</span><span class="n">level</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_specs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">reduce_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="n">diag_cols</span><span class="p">,</span> <span class="n">percentages</span><span class="o">=</span><span class="n">percentages</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ----- row layout -----------------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_row_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_RowSpec</span><span class="p">]:</span>
+        <span class="n">specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_RowSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span> <span class="ow">and</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">granularity</span><span class="p">):</span>
+                    <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_RowSpec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">_cycle_delinquent&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+                <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_RowSpec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">granularity</span><span class="si">}</span><span class="s2">+_cycle_delinquent&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_RowSpec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_cycle_delinquent&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+        <span class="n">specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_RowSpec</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span><span class="si">}</span><span class="s2">+_cycle_delinquent&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">specs</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_row_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cycle</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the matrix row index for ``(cycle, rank)``.</span>
+
+<span class="sd">        ``rank`` is only meaningful when ``detailed`` is on and ``cycle`` is 3 or 4.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">cycle</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_rows</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span> <span class="ow">and</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="mi">3</span> <span class="k">if</span> <span class="n">cycle</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="mi">3</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">granularity</span>
+            <span class="k">return</span> <span class="n">base</span> <span class="o">+</span> <span class="n">rank</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span> <span class="ow">and</span> <span class="n">cycle</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cycle</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_rows</span>
+        <span class="k">return</span> <span class="n">cycle</span>
+
+    <span class="c1"># ----- pipeline -------------------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_joined</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the merged frame of ``(unique_key, obs_max_delq, perf_max_delq, …)``.&quot;&quot;&quot;</span>
+        <span class="n">snapshot</span> <span class="o">=</span> <span class="n">load_lazy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_snapshot_source</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_key_col</span><span class="p">])</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_window</span><span class="p">(</span><span class="n">snapshot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation_sources</span><span class="p">,</span> <span class="n">_OBS_MAX</span><span class="p">,</span> <span class="s2">&quot;obs&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span><span class="p">:</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">pl</span><span class="o">.</span><span class="n">sum_horizontal</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">starts_with</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delinquency_col</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span>
+                        <span class="s2">&quot;obs_times_3_cycle&quot;</span>
+                    <span class="p">),</span>
+                    <span class="n">pl</span><span class="o">.</span><span class="n">sum_horizontal</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">starts_with</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delinquency_col</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span>
+                        <span class="s2">&quot;obs_times_4_cycle&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">perf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_window</span><span class="p">(</span><span class="n">snapshot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_performance_sources</span><span class="p">,</span> <span class="n">_PERF_MAX</span><span class="p">,</span> <span class="s2">&quot;perf&quot;</span><span class="p">)</span>
+
+        <span class="n">joined</span> <span class="o">=</span> <span class="n">obs</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">perf</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_key_col</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;_perfwin&quot;</span><span class="p">)</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_key_col</span><span class="p">,</span> <span class="n">_OBS_MAX</span><span class="p">,</span> <span class="n">_PERF_MAX</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span><span class="p">:</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unique_key_col</span><span class="p">,</span>
+                <span class="n">_OBS_MAX</span><span class="p">,</span>
+                <span class="s2">&quot;obs_times_3_cycle&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;obs_times_4_cycle&quot;</span><span class="p">,</span>
+                <span class="n">_PERF_MAX</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="n">joined</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">keep</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_window</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">snapshot</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">,</span>
+        <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">LazySource</span><span class="p">],</span>
+        <span class="n">max_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">suffix_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">LazyFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Join each window file into ``snapshot`` and reduce to one max-delq column.&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">snapshot</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">load_lazy</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_key_col</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">keep_cols</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span>
+                <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+                <span class="n">on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_key_col</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">suffix_tag</span><span class="si">}{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">max_horizontal</span><span class="p">(</span><span class="n">cs</span><span class="o">.</span><span class="n">starts_with</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delinquency_col</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">max_alias</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ----- accumulation per cycle ----------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_accumulate_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cycle</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">_OBS_MAX</span><span class="p">)</span> <span class="o">==</span> <span class="n">cycle</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rows</span><span class="o">.</span><span class="n">height</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">detailed</span> <span class="ow">and</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_accumulate_detailed</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cycle</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">grouped</span> <span class="o">=</span> <span class="n">rows</span><span class="o">.</span><span class="n">group_by</span><span class="p">([</span><span class="n">_OBS_MAX</span><span class="p">,</span> <span class="n">_PERF_MAX</span><span class="p">])</span><span class="o">.</span><span class="n">len</span><span class="p">()</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">_PERF_MAX</span><span class="p">)</span>
+        <span class="n">write_capped_counts</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span><span class="p">(</span><span class="n">cycle</span><span class="p">),</span> <span class="n">grouped</span><span class="p">,</span> <span class="n">_PERF_MAX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_accumulate_detailed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counts</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cycle</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">times_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;obs_times_</span><span class="si">{</span><span class="n">cycle</span><span class="si">}</span><span class="s2">_cycle&quot;</span>
+        <span class="n">grouped</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">times_col</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">group_by</span><span class="p">([</span><span class="n">times_col</span><span class="p">,</span> <span class="n">_PERF_MAX</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">len</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="n">times_col</span><span class="p">,</span> <span class="n">_PERF_MAX</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">granularity</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">granularity</span><span class="p">:</span>
+                <span class="n">sub</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">times_col</span><span class="p">)</span> <span class="o">==</span> <span class="n">rank</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sub</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">grouped</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">times_col</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">rank</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">_PERF_MAX</span><span class="p">)</span>
+                    <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;len&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+                    <span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">_PERF_MAX</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">row_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_index</span><span class="p">(</span><span class="n">cycle</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
+            <span class="n">write_capped_counts</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">_PERF_MAX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_delq</span><span class="p">)</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SnapshotRollRateTable&quot;</span><span class="p">,)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Alexandros Liapatis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
