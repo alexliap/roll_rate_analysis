@@ -27,7 +27,7 @@ def load_lazy(source: LazySource) -> pl.LazyFrame:
         return source
     if isinstance(source, pl.DataFrame):
         return source.lazy()
-    if isinstance(source, (str, Path)):
+    if isinstance(source, str | Path):
         return pl.scan_csv(source)
     raise TypeError(
         f"Unsupported input type {type(source).__name__}; "
