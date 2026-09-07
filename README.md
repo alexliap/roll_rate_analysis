@@ -43,8 +43,8 @@ table = MOMRollRateTable(
     max_delq=6,
 )
 
-table.compute()    # polars.DataFrame, full transition matrix
-table.reduce()     # polars.DataFrame, roll_down / stable / roll_up percentages
+table.compute()  # polars.DataFrame, full transition matrix
+table.reduce()  # polars.DataFrame, roll_down / stable / roll_up percentages
 ```
 
 In-memory polars frames work too:
@@ -58,7 +58,9 @@ obs = [pl.scan_csv(p) for p in ["data/obs1.csv", "data/obs2.csv"]]
 perf = [pl.scan_csv(p) for p in ["data/perf1.csv", "data/perf2.csv"]]
 
 table = SnapshotRollRateTable(
-    snap, obs, perf,
+    snap,
+    obs,
+    perf,
     unique_key_col="id",
     delinquency_col="delq",
     detailed=True,
