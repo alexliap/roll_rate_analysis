@@ -35,7 +35,7 @@ table = MOMRollRateTable(
     max_delq=6,
 )
 table.build()
-matrix = table.get_roll_rates()   # pandas.DataFrame, row labels in the index
+matrix = table.get_roll_rates()  # pandas.DataFrame, row labels in the index
 ```
 
 #### After
@@ -44,12 +44,13 @@ matrix = table.get_roll_rates()   # pandas.DataFrame, row labels in the index
 from roll_rate_analysis import MOMRollRateTable
 
 table = MOMRollRateTable(
-    "jan.csv", "feb.csv",
+    "jan.csv",
+    "feb.csv",
     unique_key_col="id",
     delinquency_col="delq",
     max_delq=6,
 )
-matrix = table.compute()          # polars.DataFrame, row labels in `from_state`
+matrix = table.compute()  # polars.DataFrame, row labels in `from_state`
 ```
 
 ### Added
